@@ -16,7 +16,12 @@ const nextConfig = {
     return [
       {
         source: "/demo",
-        destination: "/",
+        destination: "/r/welurik-media",
+        permanent: false,
+      },
+      {
+        source: "/r/the-coffee-house",
+        destination: "/r/welurik-media",
         permanent: false,
       },
     ];

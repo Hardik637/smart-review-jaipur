@@ -181,7 +181,8 @@ export default function GoogleAuthButton({
       }
 
       if (code === "auth/unauthorized-domain") {
-        onError?.("Domain not authorized in Firebase Console -> Authentication -> Settings -> Authorized domains.");
+        const currentHost = typeof window !== "undefined" ? window.location.hostname : "smart-review-jaipur.vercel.app";
+        onError?.(`Domain '${currentHost}' is not yet added in Firebase Console -> Authentication -> Settings -> Authorized domains. Please add '${currentHost}' or use email/password login.`);
         setLoading(false);
         return;
       }

@@ -5,7 +5,7 @@ let app: App | undefined;
 let firestoreInstance: Firestore | null = null;
 
 /**
- * Checks whether server-side Firebase Admin credentials are configured
+ * Checks whether server-side Firebase Admin credentials are fully configured
  */
 export function isFirebaseAdminConfigured(): boolean {
   const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -15,10 +15,10 @@ export function isFirebaseAdminConfigured(): boolean {
 }
 
 /**
- * Initializes and returns the authoritative Firebase Admin Firestore instance.
- * Throws a descriptive error if environment credentials are not configured.
+ * Initializes and returns the authoritative Firebase Admin Firestore instance if credentials exist.
+ * Returns null gracefully if service account credentials are not configured, allowing fallback to FirestoreREST.
  */
-export function getAuthoritativeFirestore(): Firestore {
+export function getAuthoritativeFirestore(): Firestore | null {
   if (firestoreInstance) {
     return firestoreInstance;
   }
@@ -28,15 +28,7 @@ export function getAuthoritativeFirestore(): Firestore {
   let privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
   if (!projectId || !clientEmail || !privateKey) {
-    throw new Error(
-      "Authoritative Firestore is not configured. Missing required environment variables: " +
-      [
-        !projectId && "FIREBASE_PROJECT_ID",
-        !clientEmail && "FIREBASE_CLIENT_EMAIL",
-        !privateKey && "FIREBASE_PRIVATE_KEY",
-      ].filter(Boolean).join(", ") +
-      ". Please configure your Firebase Service Account credentials."
-    );
+    return null;
   }
 
   // Handle newlines and surrounding quotes from environment variables
@@ -59,22 +51,16 @@ export function getAuthoritativeFirestore(): Firestore {
     firestoreInstance = getFirestore(app);
     return firestoreInstance;
   } catch (err: any) {
-    console.error("Failed to initialize Firebase Admin SDK:", err);
-    throw new Error(`Firebase Admin initialization failed: ${err.message || err}`);
+    console.warn("Firebase Admin SDK initialization note:", err?.message || err);
+    return null;
   }
 }
 
 /**
- * Returns { firestore } for backwards compatibility, returning null if not configured
+ * Returns { firestore } for backwards compatibility
  */
 export function getFirebaseAdmin(): { firestore: Firestore | null } {
-  try {
-    const fs = getAuthoritativeFirestore();
-    return { firestore: fs };
-  } catch {
-    return { firestore: null };
-  }
+  return { firestore: getAuthoritativeFirestore() };
 }
 
 export { firestoreInstance as firestore };
-

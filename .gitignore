@@ -54,3 +54,6 @@ dev.db
 *service-account*.json
 *firebase-adminsdk*.json
 credentials.json
+
+.vercel
+.env*
