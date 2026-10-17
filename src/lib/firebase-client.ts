@@ -14,12 +14,12 @@ import {
 const DEFAULT_FIREBASE_KEY = typeof window !== "undefined" ? atob("QUl6YVN5QjdubnJHVlNVeFZUbUt3NHQ2cVhyQlZ4QUdieGFyVnZF") : "";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyB7nnrGVSUxVTmKw4t6qXrBVxAGbxarVvE",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "saas-64015.firebaseapp.com",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "saas-64015",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "saas-64015.firebasestorage.app",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "308288452293",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:308288452293:web:b77eaa4bb8ac1cba5a62ac",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyCLvs5UjkDh12b18iplyWpoUtP_PFDdzRU",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "smart-review-jaipur.firebaseapp.com",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "smart-review-jaipur",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "smart-review-jaipur.firebasestorage.app",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "819248580146",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:819248580146:web:e9b07c0025ea077af45e2b",
 };
 
 let app: FirebaseApp | undefined;
