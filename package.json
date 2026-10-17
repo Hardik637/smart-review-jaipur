@@ -1,0 +1,47 @@
+{
+  "name": "welurik-review",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "pre-deploy": "node scripts/pre-deploy-audit.mjs",
+    "prisma:generate": "prisma generate",
+    "prisma:db-push": "prisma db push"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@prisma/client": "^5.22.0",
+    "@types/crypto-js": "^4.2.2",
+    "canvas-confetti": "^1.9.3",
+    "clsx": "^2.1.1",
+    "crypto-js": "^4.2.0",
+    "firebase": "^12.18.0",
+    "firebase-admin": "^14.3.0",
+    "framer-motion": "^13.1.1",
+    "jspdf": "^4.2.1",
+    "lucide-react": "^0.460.0",
+    "next": "^14.2.18",
+    "nodemailer": "^9.0.6",
+    "qrcode": "^1.5.4",
+    "razorpay": "^2.9.8",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.5.4"
+  },
+  "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/node": "^20.17.6",
+    "@types/nodemailer": "^8.0.1",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "prisma": "^5.22.0",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3"
+  }
+}

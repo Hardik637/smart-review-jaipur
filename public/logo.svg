@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="320 180 550 830" width="100%" height="100%">
+  <!-- Central Spine Blade -->
+  <polygon points="670,210 590,260 480,980 560,930" fill="#0A0B0E" />
+  
+  <!-- Left Falcon-Wing W -->
+  <polygon points="550,400 440,470 350,610 420,640 370,770 450,790 500,670 450,630 520,520" fill="#0A0B0E" />
+  
+  <!-- Right Chiseled R -->
+  <polygon points="610,420 770,450 830,540 800,650 700,690 800,820 740,910 650,760 590,750 600,670 710,640 740,560 680,490 615,470" fill="#0A0B0E" />
+</svg>

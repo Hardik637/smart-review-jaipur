@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ECFDF5;
+  --foreground: #090D14;
+}
+
+body {
+  color: var(--foreground);
+  background-color: #ECFDF5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Base mint-emerald canvas */
+.neo-canvas-bg {
+  background-color: #ECFDF5;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(187, 247, 208, 0.45) 0%, transparent 45%),
+    radial-gradient(circle at 85% 65%, rgba(167, 243, 208, 0.35) 0%, transparent 45%);
+}
+
+/* Active architectural blueprint grid with subtle emerald lines */
+.neo-grid-overlay {
+  background-size: 36px 36px;
+  background-image: 
+    linear-gradient(to right, rgba(21, 128, 61, 0.065) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(21, 128, 61, 0.065) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse 95% 90% at 50% 30%, #000 65%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 95% 90% at 50% 30%, #000 65%, transparent 100%);
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Print specific styles for 4" x 6" Vertical Standees (CMYK Commercial Ready) */
+@media print {
+  @page {
+    size: 4in 6in portrait;
+    margin: 0;
+  }
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  body * {
+    visibility: hidden;
+  }
+  #printable-standee, #printable-standee * {
+    visibility: visible;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  #printable-standee {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 4in !important;
+    height: 6in !important;
+    max-width: 4in !important;
+    max-height: 6in !important;
+    min-width: 4in !important;
+    min-height: 6in !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    border: none !important;
+    page-break-inside: avoid;
+    page-break-after: avoid;
+    overflow: hidden !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

@@ -1,0 +1,138 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          String       @id @default(uuid())
+  email       String       @unique
+  password    String
+  createdAt   DateTime     @default(now())
+  business    Business?
+  resetTokens ResetToken[]
+}
+
+model ResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([tokenHash])
+}
+
+model Business {
+  id               String            @id @default(uuid())
+  userId           String            @unique
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String
+  slug             String            @unique
+  category         String            @default("cafe")
+  location         String?
+  description      String?
+  logoUrl          String?
+  googleReviewUrl  String
+  brandColor       String            @default("#4f46e5")
+  phone            String?
+  monthlyAiQuota   Int               @default(500)
+  aiCallsThisMonth Int               @default(0)
+  isPro            Boolean           @default(false)
+  planName         String            @default("free")
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  services         BusinessService[]
+  topics           BusinessTopic[]
+  reviewSessions   ReviewSession[]
+  feedbacks        Feedback[]
+  analyticsEvents  AnalyticsEvent[]
+  orders           Order[]
+}
+
+model BusinessService {
+  id         String   @id @default(uuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name       String
+
+  @@index([businessId])
+}
+
+model BusinessTopic {
+  id         String   @id @default(uuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name       String
+  type       String   @default("positive") // positive or issue
+
+  @@index([businessId])
+}
+
+model ReviewSession {
+  id               String   @id @default(uuid())
+  businessId       String
+  business         Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  rating           Int      @default(5)
+  selectedTopics   String   // JSON string of array
+  selectedServices String   // JSON string of array
+  customerComment  String?
+  generatedReview  String?
+  editedReview     String?
+  tone             String   @default("natural")
+  status           String   @default("generated") // generated, copied, opened_google
+  createdAt        DateTime @default(now())
+
+  @@index([businessId])
+}
+
+model Feedback {
+  id            String   @id @default(uuid())
+  businessId    String
+  business      Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  customerName  String?
+  customerPhone String?
+  customerEmail String?
+  message       String
+  issueTopics   String?  // JSON string
+  status        String   @default("unread") // unread, resolved
+  createdAt     DateTime @default(now())
+
+  @@index([businessId])
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(uuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  eventType  String   // scan, select_topics, review_generated, review_copied, google_clicked, feedback_submitted
+  metadata   String?  // JSON
+  createdAt  DateTime @default(now())
+
+  @@index([businessId])
+}
+
+model Order {
+  id                String    @id @default(uuid())
+  businessId        String?
+  business          Business? @relation(fields: [businessId], references: [id], onDelete: SetNull)
+  userEmail         String?
+  razorpayOrderId   String    @unique
+  razorpayPaymentId String?   @unique
+  razorpaySignature String?
+  amount            Int       // in paise (e.g. 199900 for ₹1,999)
+  currency          String    @default("INR")
+  status            String    @default("created") // created, paid, failed
+  planType          String    @default("lifetime") // lifetime, monthly
+  receipt           String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([businessId])
+}
