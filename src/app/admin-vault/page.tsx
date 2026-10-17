@@ -158,7 +158,7 @@ export default function AdminVaultPage() {
           email: user.email,
           slug: user.business?.slug,
           isPro: newStatus,
-          planName: newStatus ? "Lifetime License (Admin Granted)" : "Unpaid",
+          planName: newStatus ? "Pro License (Admin Granted)" : "Unpaid",
         }),
       });
 
@@ -175,7 +175,7 @@ export default function AdminVaultPage() {
                 ? {
                     ...u,
                     isPro: newStatus,
-                    planName: newStatus ? "Lifetime License (Admin Granted)" : "Unpaid",
+                    planName: newStatus ? "Pro License (Admin Granted)" : "Unpaid",
                     trialEndsAt: newStatus ? u.trialEndsAt : null,
                     business: u.business ? { ...u.business, isPro: newStatus } : null,
                   }
@@ -677,7 +677,7 @@ export default function AdminVaultPage() {
                               {user.isPro ? (
                                 <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full text-[10px] font-black">
                                   <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                                  {user.planName || "LIFETIME PRO"}
+                                  {user.planName || "PRO ACTIVE"}
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-600 border border-slate-300 px-2 py-0.5 rounded-full text-[10px] font-bold">

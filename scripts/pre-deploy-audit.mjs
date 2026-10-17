@@ -105,7 +105,7 @@ try {
 }
 
 // -------------------------------------------------------------
-// CHECK 3: Multi-Tier Pricing & Copy Compliance (18M, 24M, 48M)
+// CHECK 3: Multi-Tier Pricing & Copy Compliance (1M, 3M, 6M, 1Y)
 // -------------------------------------------------------------
 console.log("\n🔍 Checking Multi-Tier Pricing & Copy Compliance...");
 try {
@@ -113,16 +113,17 @@ try {
   const landingContent = fs.readFileSync(landingPagePath, "utf-8");
 
   // Verify Hero dropdown front text
-  if (!landingContent.includes("Get this at 1,999")) {
-    reportFail("Pricing Compliance Audit", "Hero CTA is missing 'Get this at 1,999' front button text");
-  } else if (landingContent.includes("one-time lifetime deal")) {
-    reportFail("Pricing Compliance Audit", "Found unapproved 'one-time lifetime deal' badge in pricing section");
+  if (!landingContent.includes("Get this at 199")) {
+    reportFail("Pricing Compliance Audit", "Hero CTA is missing 'Get this at 199' front button text");
+  } else if (landingContent.includes("one-time lifetime deal") || landingContent.includes("Lifetime License")) {
+    reportFail("Pricing Compliance Audit", "Found unapproved lifetime references in landing page");
   } else {
-    // Verify 3 distinct pricing tiers are present on landing page
+    // Verify 4 distinct pricing tiers are present on landing page
     const requiredPricingTiers = [
-      { label: "18 Months (At 1,999 for 18 months)", pattern: /1[,.]?999\s*(for|\/)\s*18\s*months/i },
-      { label: "24 Months (At 2,499 for 24 months)", pattern: /2[,.]?499\s*(for|\/)\s*24\s*months/i },
-      { label: "48 Months (At 3,499 for 48 months)", pattern: /3[,.]?499\s*(for|\/)\s*48\s*months/i }
+      { label: "1 Month (At 199 for 1 month)", pattern: /199\s*(for|\/)\s*1\s*month/i },
+      { label: "3 Months (At 574 for 3 months)", pattern: /574\s*(for|\/)\s*3\s*months/i },
+      { label: "6 Months (At 1,099 for 6 months)", pattern: /1[,.]?099\s*(for|\/)\s*6\s*months/i },
+      { label: "1 Year (At 2,000 for 1 year)", pattern: /2[,.]?000\s*(for|\/)\s*1\s*year/i }
     ];
 
     let missingTiers = [];
@@ -135,7 +136,7 @@ try {
     if (missingTiers.length > 0) {
       reportFail("Pricing Compliance Audit", `Missing required tiers: ${missingTiers.join(", ")}`);
     } else {
-      reportPass("Pricing Compliance Audit", "All 3 pricing tiers (18M @ ₹1,999, 24M @ ₹2,499, 48M @ ₹3,499) verified");
+      reportPass("Pricing Compliance Audit", "All 4 pricing tiers (1M @ ₹199, 3M @ ₹574, 6M @ ₹1,099, 1Y @ ₹2,000) verified");
     }
   }
 } catch (e) {

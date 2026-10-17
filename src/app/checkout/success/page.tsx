@@ -80,7 +80,7 @@ function SuccessContent() {
           Payment Successful! 🎉
         </h1>
         <p className="text-zinc-600 text-sm sm:text-base">
-          Welcome to <span className="font-semibold text-zinc-900">Welurik Review Pro</span>. Your Lifetime License is now permanently activated.
+          Welcome to <span className="font-semibold text-zinc-900">Welurik Review Pro</span>. Your subscription is now successfully activated.
         </p>
       </div>
 
@@ -88,7 +88,7 @@ function SuccessContent() {
       <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-200/60 text-left space-y-3 text-sm">
         <div className="flex justify-between items-center pb-2 border-b border-zinc-200/60">
           <span className="text-zinc-500 font-medium">Plan</span>
-          <span className="font-bold text-zinc-900">Lifetime License (₹1,999 only)</span>
+          <span className="font-bold text-zinc-900">Welurik Review Pro</span>
         </div>
         <div className="flex justify-between items-center pb-2 border-b border-zinc-200/60">
           <span className="text-zinc-500 font-medium">Order ID</span>

@@ -56,6 +56,7 @@ export default function DashboardLayout({
   const [paywallError, setPaywallError] = useState("");
   const [showPaywallPromo, setShowPaywallPromo] = useState(false);
   const [showCustomerCare, setShowCustomerCare] = useState(false);
+  const [paywallPlan, setPaywallPlan] = useState<"1m" | "3m" | "6m" | "1y">("1y");
 
 
   const handleApplyPaywallPromo = async () => {
@@ -551,52 +552,76 @@ export default function DashboardLayout({
               </div>
               <div className="space-y-1">
                 <div className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-[11px] font-bold">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Instant Lifetime Access
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Instant Pro Access
                 </div>
                 <h2 className="text-2xl font-black text-slate-950 tracking-tight">Activate Your Workspace</h2>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  Complete your one-time payment of <strong>₹1,999 only</strong> to unlock your analytics dashboard, QR standee studio, and start getting 5-star Google reviews.
+                  Choose a plan to unlock your analytics dashboard, QR standee studio, and start getting 5-star Google reviews.
                 </p>
               </div>
 
-              {/* Ultra-Clean Modern Pricing Card */}
-              <div className="bg-slate-50/90 border border-slate-200/80 rounded-2xl p-5 space-y-4 text-left shadow-sm">
-                <div className="flex items-center justify-between border-b border-slate-200/60 pb-3.5">
+              {/* 4-Tier Plan Selector Pills */}
+              <div className="grid grid-cols-2 gap-2 text-left">
+                {[
+                  { id: "1m" as const, name: "1 Month", price: "₹199", rate: "₹199/mo" },
+                  { id: "3m" as const, name: "3 Months", price: "₹574", rate: "₹191/mo" },
+                  { id: "6m" as const, name: "6 Months", price: "₹1,099", rate: "₹183/mo" },
+                  { id: "1y" as const, name: "1 Year", price: "₹2,000", rate: "₹166/mo", best: true },
+                ].map((p) => {
+                  const selected = paywallPlan === p.id;
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => setPaywallPlan(p.id)}
+                      className={`p-3 rounded-2xl border-2 transition-all cursor-pointer relative text-left ${
+                        selected
+                          ? "border-slate-950 bg-emerald-50/80 shadow-[2px_2px_0px_#000000]"
+                          : "border-slate-200 bg-white hover:border-slate-300"
+                      }`}
+                    >
+                      {p.best && (
+                        <span className="absolute -top-2 right-2 bg-emerald-600 text-white text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-full">
+                          Best Value
+                        </span>
+                      )}
+                      <div className="font-bold text-xs text-slate-900">{p.name}</div>
+                      <div className="text-sm font-black text-slate-950">{p.price}</div>
+                      <div className="text-[10px] text-slate-500 font-medium">{p.rate}</div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Selected Plan Features Card */}
+              <div className="bg-slate-50/90 border border-slate-200/80 rounded-2xl p-4 space-y-3 text-left shadow-sm">
+                <div className="flex items-center justify-between border-b border-slate-200/60 pb-2.5">
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900">Lifetime Pro License</h3>
-                    <p className="text-[11px] text-slate-500 font-medium">One-time payment • Lifetime access</p>
+                    <h3 className="text-xs font-bold text-slate-900">
+                      {paywallPlan === "1m" ? "1 Month Access" : paywallPlan === "3m" ? "3 Months Access" : paywallPlan === "6m" ? "6 Months Access" : "1 Year Access"}
+                    </h3>
+                    <p className="text-[10.5px] text-slate-500 font-medium">Instant activation via UPI & Cards</p>
                   </div>
                   <div className="text-right">
-                    <div className="flex items-center gap-1.5 justify-end">
-                      <span className="text-xs text-slate-400 line-through font-medium">₹4,999</span>
-                      <span className="text-xl font-black text-slate-950">₹1,999 only</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100/60 px-1.5 py-0.5 rounded">SAVE 60%</span>
+                    <span className="text-base font-black text-slate-950">
+                      {paywallPlan === "1m" ? "₹199" : paywallPlan === "3m" ? "₹574" : paywallPlan === "6m" ? "₹1,099" : "₹2,000"}
+                    </span>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-200/60 pt-2.5 space-y-2 text-xs text-slate-700">
-                  <div className="flex items-center gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="font-semibold text-slate-900">Rank #1 on Google Maps & beat local competitors</span>
+                <div className="space-y-1.5 text-xs text-slate-700">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span className="font-semibold text-slate-900 text-[11.5px]">Rank #1 on Google Maps & beat local competitors</span>
                   </div>
-                  <div className="flex items-center gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="font-semibold text-slate-900">10x More 5-star reviews (AI writes them in 5 secs)</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span className="font-semibold text-slate-900 text-[11.5px]">10x More 5-star reviews (AI writes them in 30s)</span>
                   </div>
-                  <div className="flex items-center gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="font-semibold text-slate-900">Turn everyday footfall into repeat paying customers</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span className="font-semibold text-slate-900 text-[11.5px]">Unlimited Standee Studio & Private Grievance Inbox</span>
                   </div>
-                  <div className="flex items-center gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="font-semibold text-slate-900">Zero monthly fees • Pays for itself with 1 customer</span>
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs font-bold text-slate-900">
-                  <span className="text-slate-500 font-semibold">Total Payable:</span>
-                  <span className="text-base font-black text-slate-950">₹1,999 only</span>
                 </div>
               </div>
 
@@ -658,8 +683,8 @@ export default function DashboardLayout({
               </div>
 
               <CheckoutButton
-                planType="lifetime"
-                buttonText="Pay ₹1,999 only with UPI / Card & Unlock"
+                planType={paywallPlan}
+                buttonText={`Pay ${paywallPlan === "1m" ? "₹199" : paywallPlan === "3m" ? "₹574" : paywallPlan === "6m" ? "₹1,099" : "₹2,000"} with UPI / Card & Unlock`}
                 className="w-full py-4 text-xs font-black rounded-xl"
               />
 

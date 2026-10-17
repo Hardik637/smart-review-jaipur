@@ -18,9 +18,9 @@ interface CheckoutButtonProps {
 }
 
 export function CheckoutButton({
-  planType = "lifetime",
+  planType = "1y",
   className = "",
-  buttonText = "Get Lifetime Access — ₹1,999 only",
+  buttonText = "Upgrade to Pro — Instant Activation",
   showIcon = true,
 }: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
@@ -103,7 +103,7 @@ export function CheckoutButton({
         amount: orderData.amount,
         currency: orderData.currency,
         name: "Welurik Review",
-        description: orderData.planLabel || "Lifetime License Access",
+        description: orderData.planLabel || "Welurik Review Pro Access",
         image: "/favicon.png",
         order_id: orderData.orderId,
         handler: async function (response: any) {

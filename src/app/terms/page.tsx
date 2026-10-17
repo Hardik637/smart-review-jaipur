@@ -50,9 +50,9 @@ export default function TermsOfServicePage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base sm:text-lg font-bold text-slate-950">3. Lifetime License Scope</h2>
+            <h2 className="text-base sm:text-lg font-bold text-slate-950">3. Subscription Access & Validity</h2>
             <p>
-              A Lifetime License granted under the ₹1,999 only deal provides perpetual software access for one business entity, including future platform updates, QR Standee generation, and a generous monthly quota of AI generations.
+              Subscription plans (1 Month, 3 Months, 6 Months, or 1 Year) provide full software access for one business entity during the purchased validity term, including platform updates, QR Standee generation, and AI review generation quotas. Access remains active for the selected duration from the date of payment.
             </p>
           </section>
 

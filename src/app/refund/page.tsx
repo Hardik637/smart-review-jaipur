@@ -4,8 +4,8 @@ import WelurikLogo from "@/components/Logo";
 import { RefreshCcw, ArrowLeft } from "lucide-react";
 
 export const metadata = {
-  title: "Refund Policy | Welurik Review",
-  description: "Refund and cancellation policy for Welurik Review SaaS.",
+  title: "No-Refund Policy | Welurik Review",
+  description: "No-refund policy and digital access terms for Welurik Review SaaS.",
 };
 
 export default function RefundPolicyPage() {
@@ -28,31 +28,31 @@ export default function RefundPolicyPage() {
       <main className="max-w-3xl w-full mx-auto px-6 py-12 space-y-8 flex-1">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-200 text-xs font-semibold">
-            <RefreshCcw className="w-3.5 h-3.5 text-slate-600" /> Transparent Guarantee
+            <RefreshCcw className="w-3.5 h-3.5 text-slate-600" /> Policy Notice
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">Refund & Cancellation Policy</h1>
-          <p className="text-xs text-slate-500">Last updated: August 31, 2026</p>
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">No-Refund Policy</h1>
+          <p className="text-xs text-slate-500">Last updated: October 2026</p>
         </div>
 
         <div className="prose prose-slate max-w-none text-xs sm:text-sm text-slate-700 space-y-6 leading-relaxed">
           <section className="space-y-2">
-            <h2 className="text-base sm:text-lg font-bold text-slate-950">1. 7-Day Money-Back Guarantee</h2>
+            <h2 className="text-base sm:text-lg font-bold text-slate-950">1. All Sales Are Final</h2>
             <p>
-              We want you to be completely satisfied with Welurik Review. If within <strong>7 days</strong> of your initial purchase you determine that our review standee and AI assistant tools do not meet your business needs, contact us for a prompt, 100% full refund.
+              Welurik Review operates a strict <strong>No-Refund Policy</strong> on all subscription plans (1 Month, 3 Months, 6 Months, and 1 Year). Due to the immediate digital provisioning of software access, custom QR Standee templates, AI generation tokens, and analytics infrastructure upon successful payment, we do not offer refunds, prorated credits, or cancellations once an order has been completed.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base sm:text-lg font-bold text-slate-950">2. Refund Processing</h2>
+            <h2 className="text-base sm:text-lg font-bold text-slate-950">2. Instant Digital Provisioning</h2>
             <p>
-              Approved refunds are credited back to your original payment method (UPI account, credit/debit card, or bank account) via Razorpay within <strong>5–7 business days</strong>.
+              Upon successful payment via Razorpay, your business account is immediately activated with full access to the QR Standee Studio, private grievance channels, and AI review generation assistant. Because these digital assets and computational quotas cannot be revoked once issued, all payments are non-refundable.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base sm:text-lg font-bold text-slate-950">3. How to Request a Refund</h2>
+            <h2 className="text-base sm:text-lg font-bold text-slate-950">3. Support & Inquiries</h2>
             <p>
-              To initiate a refund, email your Razorpay Order ID or registered business email to <a href="mailto:support@welurik.com" className="text-emerald-600 font-semibold underline">support@welurik.com</a> with the subject line "Refund Request".
+              If you experience any technical difficulties accessing your account, configuring your Google Maps review link, or generating your QR standees, our support team is available to assist you. Please reach out to <a href="mailto:support@welurik.media" className="text-emerald-600 font-semibold underline">support@welurik.media</a> for immediate setup assistance.
             </p>
           </section>
         </div>

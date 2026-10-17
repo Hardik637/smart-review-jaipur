@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
         loginCount: u.loginCount || 1,
         lastLoginProvider: u.lastLoginProvider || (u.password ? "credentials" : "google"),
         isPro,
-        planName: isPro ? (u.planName || biz?.planName || "Lifetime License") : "Unpaid",
+        planName: isPro ? (u.planName || biz?.planName || "Pro License") : "Unpaid",
         trialEndsAt: u.trialEndsAt || biz?.trialEndsAt || null,
         business: biz
           ? {
@@ -170,7 +170,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     const newIsPro = Boolean(isPro);
-    const plan = planName || (newIsPro ? "Lifetime License (Admin Granted)" : "Unpaid");
+    const plan = planName || (newIsPro ? "Pro License (Admin Granted)" : "Unpaid");
 
     // 1. Update User in Firestore
     let user: any = null;

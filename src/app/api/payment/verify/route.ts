@@ -26,7 +26,7 @@ export async function POST(req: NextRequest | Request) {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      planType = "lifetime",
+      planType = "1y",
     } = body;
 
     if (!razorpay_order_id || !razorpay_payment_id) {
@@ -76,21 +76,34 @@ export async function POST(req: NextRequest | Request) {
       }
     }
 
-    let amountInPaise = 199900;
-    let planTitle = "18 Months Access";
+    let amountInPaise = 200000;
+    let planTitle = "1 Year Access";
     const normalizedPlan = (planType || "").toLowerCase();
-    if (normalizedPlan === "24m" || normalizedPlan === "24months") {
-      amountInPaise = 249900;
-      planTitle = "24 Months Access";
-    } else if (normalizedPlan === "48m" || normalizedPlan === "48months") {
-      amountInPaise = 349900;
-      planTitle = "48 Months Access";
+    let validDays = 365;
+
+    if (normalizedPlan === "1m" || normalizedPlan === "1month") {
+      amountInPaise = 19900;
+      planTitle = "1 Month Access";
+      validDays = 30;
+    } else if (normalizedPlan === "3m" || normalizedPlan === "3months") {
+      amountInPaise = 57400;
+      planTitle = "3 Months Access";
+      validDays = 90;
+    } else if (normalizedPlan === "6m" || normalizedPlan === "6months") {
+      amountInPaise = 109900;
+      planTitle = "6 Months Access";
+      validDays = 180;
+    } else if (normalizedPlan === "1y" || normalizedPlan === "1year" || normalizedPlan === "12m") {
+      amountInPaise = 200000;
+      planTitle = "1 Year Access";
+      validDays = 365;
     }
 
     // 1. Permanently record and update order in authoritative Firestore
     const userEmail = session?.email;
     const userId = session?.userId;
     const activationTime = new Date().toISOString();
+    const expiresAt = new Date(Date.now() + validDays * 24 * 60 * 60 * 1000).toISOString();
 
     // A. Update User in Firestore
     let fsUser: any = null;
@@ -101,9 +114,10 @@ export async function POST(req: NextRequest | Request) {
           await FirestoreREST.setDocument("users", fsUser.id, {
             ...fsUser,
             isPro: true,
-            planName: "Lifetime License",
-            planType: "lifetime",
+            planName: `${planTitle} Pro`,
+            planType: normalizedPlan || "1y",
             paidAt: activationTime,
+            expiresAt,
           });
         }
       } catch (fsUserErr) {
@@ -135,10 +149,11 @@ export async function POST(req: NextRequest | Request) {
         userId: userId || fsBusiness?.userId || "user",
         category: fsBusiness?.category || "cafe",
         isPro: true,
-        planName: "Lifetime License",
-        planType: "lifetime",
+        planName: `${planTitle} Pro`,
+        planType: normalizedPlan || "1y",
         monthlyAiQuota: 999999,
         paidAt: activationTime,
+        expiresAt,
       };
 
       await FirestoreREST.setDocument("businesses", targetSlug, finalBizDoc);
@@ -151,6 +166,7 @@ export async function POST(req: NextRequest | Request) {
           isPro: true,
           name: finalBizDoc.name,
           paidAt: activationTime,
+          expiresAt,
         });
       }
     } catch (fsBizErr) {
@@ -166,12 +182,13 @@ export async function POST(req: NextRequest | Request) {
         amount: amountInPaise,
         currency: "INR",
         status: "paid",
-        planType: normalizedPlan || "18m",
+        planType: normalizedPlan || "1y",
         planName: planTitle,
         userId: userId || "guest",
         userEmail: userEmail || "",
         businessSlug: fsBusiness?.slug || businessSlug || "",
         createdAt: activationTime,
+        expiresAt,
       });
     } catch (orderSaveErr) {
       console.warn("Firestore order record note:", orderSaveErr);

@@ -42,11 +42,12 @@ export async function POST(req: Request) {
             try {
               const u = await FirestoreDB.getUserByEmail(order.userEmail);
               if (u) {
+                const planTitle = order.planName || "Pro Plan";
                 await FirestoreREST.setDocument("users", u.id, {
                   ...u,
                   isPro: true,
-                  planName: "Lifetime License",
-                  planType: order.planType || "lifetime",
+                  planName: planTitle,
+                  planType: order.planType || "1y",
                 });
                 if (u.businessSlug) {
                   const b = await FirestoreDB.getBusinessBySlug(u.businessSlug);
@@ -54,8 +55,8 @@ export async function POST(req: Request) {
                     await FirestoreREST.setDocument("businesses", b.slug || b.id, {
                       ...b,
                       isPro: true,
-                      planName: "Lifetime License",
-                      planType: order.planType || "lifetime",
+                      planName: planTitle,
+                      planType: order.planType || "1y",
                       monthlyAiQuota: 999999,
                     });
                   }

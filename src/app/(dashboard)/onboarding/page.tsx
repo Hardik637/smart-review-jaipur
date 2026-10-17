@@ -26,6 +26,7 @@ export default function OnboardingPage() {
   const [brandColor, setBrandColor] = useState("#0f172a");
   const [loading, setLoading] = useState(false);
   const [paymentError, setPaymentError] = useState("");
+  const [onboardingPlan, setOnboardingPlan] = useState<"1m" | "3m" | "6m" | "1y">("1y");
 
   // Promo Code States
   const [promoCode, setPromoCode] = useState("");
@@ -217,7 +218,7 @@ export default function OnboardingPage() {
       const orderRes = await fetch("/api/payment/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planType: "lifetime" }),
+        body: JSON.stringify({ planType: onboardingPlan }),
       });
 
       const orderData = await orderRes.json();
@@ -236,7 +237,7 @@ export default function OnboardingPage() {
         amount: orderData.amount,
         currency: orderData.currency || "INR",
         name: "Welurik Review",
-        description: "₹1,999 only Lifetime License Activation",
+        description: orderData.planLabel || "Welurik Review Pro Activation",
         order_id: orderData.orderId,
         image: "/favicon.png",
         handler: async function (response: any) {
@@ -249,7 +250,7 @@ export default function OnboardingPage() {
                 razorpay_order_id: response.razorpay_order_id || orderData.orderId,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
-                planType: "lifetime",
+                planType: onboardingPlan,
               }),
             });
 
@@ -307,7 +308,7 @@ export default function OnboardingPage() {
       <div className="w-full max-w-md mx-auto my-auto z-10 space-y-6">
         <div className="text-center space-y-2">
           <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-            {step === 3 ? "Activate Lifetime License" : "Setup Your Business Funnel"}
+            {step === 3 ? "Activate Pro Workspace" : "Setup Your Business Funnel"}
           </h1>
           <p className="text-xs text-slate-500">
             {step === 3
@@ -545,27 +546,60 @@ export default function OnboardingPage() {
             <div className="space-y-5">
               <div className="space-y-1">
                 <div className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-[11px] font-bold">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Instant Lifetime Access
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Instant Pro Access
                 </div>
                 <h2 className="text-xl font-black text-slate-950 tracking-tight">Activate & Launch Workspace</h2>
                 <p className="text-xs text-slate-500">
-                  Complete your one-time payment to unlock your QR standee studio and dashboard.
+                  Choose a plan to unlock your QR standee studio and dashboard.
                 </p>
               </div>
 
+              {/* 4-Tier Plan Selector */}
+              <div className="grid grid-cols-2 gap-2 text-left">
+                {[
+                  { id: "1m" as const, name: "1 Month", price: "₹199", rate: "₹199/mo" },
+                  { id: "3m" as const, name: "3 Months", price: "₹574", rate: "₹191/mo" },
+                  { id: "6m" as const, name: "6 Months", price: "₹1,099", rate: "₹183/mo" },
+                  { id: "1y" as const, name: "1 Year", price: "₹2,000", rate: "₹166/mo", best: true },
+                ].map((p) => {
+                  const selected = onboardingPlan === p.id;
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => setOnboardingPlan(p.id)}
+                      className={`p-3 rounded-2xl border-2 transition-all cursor-pointer relative text-left ${
+                        selected
+                          ? "border-slate-950 bg-emerald-50/80 shadow-[2px_2px_0px_#000000]"
+                          : "border-slate-200 bg-white hover:border-slate-300"
+                      }`}
+                    >
+                      {p.best && (
+                        <span className="absolute -top-2 right-2 bg-emerald-600 text-white text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-full">
+                          Best Value
+                        </span>
+                      )}
+                      <div className="font-bold text-xs text-slate-900">{p.name}</div>
+                      <div className="text-sm font-black text-slate-950">{p.price}</div>
+                      <div className="text-[10px] text-slate-500 font-medium">{p.rate}</div>
+                    </button>
+                  );
+                })}
+              </div>
+
               {/* Ultra-Clean Modern Pricing Card */}
-              <div className="bg-slate-50/90 border border-slate-200/80 rounded-2xl p-5 space-y-4 shadow-sm">
-                <div className="flex items-center justify-between border-b border-slate-200/60 pb-3.5">
+              <div className="bg-slate-50/90 border border-slate-200/80 rounded-2xl p-5 space-y-4 shadow-sm text-left">
+                <div className="flex items-center justify-between border-b border-slate-200/60 pb-3">
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900">Lifetime Pro License</h3>
-                    <p className="text-[11px] text-slate-500 font-medium">One-time payment • Lifetime access</p>
+                    <h3 className="text-sm font-bold text-slate-900">
+                      {onboardingPlan === "1m" ? "1 Month Access" : onboardingPlan === "3m" ? "3 Months Access" : onboardingPlan === "6m" ? "6 Months Access" : "1 Year Access"}
+                    </h3>
+                    <p className="text-[11px] text-slate-500 font-medium">Instant activation via UPI & Cards</p>
                   </div>
                   <div className="text-right">
-                    <div className="flex items-center gap-1.5 justify-end">
-                      <span className="text-xs text-slate-400 line-through font-medium">₹4,999</span>
-                      <span className="text-xl font-black text-slate-950">₹1,999 only</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100/60 px-1.5 py-0.5 rounded">SAVE 60%</span>
+                    <span className="text-xl font-black text-slate-950">
+                      {onboardingPlan === "1m" ? "₹199" : onboardingPlan === "3m" ? "₹574" : onboardingPlan === "6m" ? "₹1,099" : "₹2,000"}
+                    </span>
                   </div>
                 </div>
 
@@ -580,25 +614,21 @@ export default function OnboardingPage() {
                     <div className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
                       <Check className="w-2.5 h-2.5 stroke-[3]" />
                     </div>
-                    <span className="font-semibold text-slate-900">10x More 5-star reviews (AI writes them in 5 secs)</span>
+                    <span className="font-semibold text-slate-900">10x More 5-star reviews (AI writes them in 30s)</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <div className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
                       <Check className="w-2.5 h-2.5 stroke-[3]" />
                     </div>
-                    <span className="font-semibold text-slate-900">Turn everyday footfall into repeat paying customers</span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                      <Check className="w-2.5 h-2.5 stroke-[3]" />
-                    </div>
-                    <span className="font-semibold text-slate-900">Zero monthly fees • Pays for itself with 1 customer</span>
+                    <span className="font-semibold text-slate-900">Unlimited QR Standee Studio & Private Grievance Inbox</span>
                   </div>
                 </div>
 
                 <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs font-bold text-slate-900">
                   <span className="text-slate-500 font-semibold">Total Payable:</span>
-                  <span className="text-base font-black text-slate-950">₹1,999 only</span>
+                  <span className="text-base font-black text-slate-950">
+                    {onboardingPlan === "1m" ? "₹199" : onboardingPlan === "3m" ? "₹574" : onboardingPlan === "6m" ? "₹1,099" : "₹2,000"}
+                  </span>
                 </div>
               </div>
 
@@ -689,7 +719,7 @@ export default function OnboardingPage() {
                   ) : (
                     <>
                       <Lock className="w-3.5 h-3.5" />
-                      Pay ₹1,999 only & Unlock Dashboard
+                      Pay {onboardingPlan === "1m" ? "₹199" : onboardingPlan === "3m" ? "₹574" : onboardingPlan === "6m" ? "₹1,099" : "₹2,000"} & Unlock Dashboard
                     </>
                   )}
                 </button>

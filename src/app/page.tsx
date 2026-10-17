@@ -61,7 +61,7 @@ export default function LandingPage() {
       if (!container) return;
 
       setActivePricingSlide((prev) => {
-        const nextSlide = (prev + 1) % 3;
+        const nextSlide = (prev + 1) % 4;
         const card = container.children[nextSlide] as HTMLElement;
         if (card) {
           const offsetLeft =
@@ -87,7 +87,7 @@ export default function LandingPage() {
     const card = container.children[0] as HTMLElement;
     const cardWidth = card ? card.clientWidth + 20 : container.clientWidth * 0.85;
     const index = Math.round(scrollLeft / (cardWidth || 1));
-    const clampedIndex = Math.max(0, Math.min(2, index));
+    const clampedIndex = Math.max(0, Math.min(3, index));
     if (clampedIndex !== activePricingSlide) {
       setActivePricingSlide(clampedIndex);
     }
@@ -161,8 +161,8 @@ export default function LandingPage() {
       a: "Yes! You get unlimited access to the Standee Studio. You can download and print high-resolution QR standees formatted for standard 4\" x 6\" acrylic frames, foldable table tents, or counter stickers for as many tables as you have.",
     },
     {
-      q: "Is there any monthly subscription fee?",
-      a: "No monthly subscriptions or hidden charges. Choose from our transparent plans: 18 months (₹1,999), 24 months (₹2,499), or 48 months (₹3,499) with full software access and zero recurring surprises.",
+      q: "How does the pricing work?",
+      a: "Transparent, upfront plans with zero hidden fees: 1 Month (₹199), 3 Months (₹574), 6 Months (₹1,099), or 1 Year (₹2,000). You get full software access, unlimited QR standee generation, and AI review assistant for your selected duration.",
     },
   ];
 
@@ -291,7 +291,7 @@ export default function LandingPage() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full py-2.5 text-center text-xs font-bold text-white bg-[#15803D] border-2 border-black rounded-full shadow-[2px_2px_0px_#000000]"
                 >
-                  View Plans (From ₹1,999)
+                  View Plans (From ₹199)
                 </Link>
               </div>
             </motion.div>
@@ -371,7 +371,7 @@ export default function LandingPage() {
                     aria-expanded={pricingDropdownOpen}
                     aria-haspopup="true"
                   >
-                    <span>Get this at 1,999</span>
+                    <span>Get this at 199</span>
                     <ChevronDown
                       className={`w-4 h-4 transition-transform duration-200 ${
                         pricingDropdownOpen ? "rotate-180" : ""
@@ -390,67 +390,78 @@ export default function LandingPage() {
                       transition={{ duration: 0.18, ease: "easeOut" }}
                       className="absolute left-0 sm:left-0 right-0 sm:right-auto sm:w-[320px] mt-2.5 bg-white border-2 border-black rounded-2xl p-2.5 shadow-[5px_5px_0px_#000000] z-50 space-y-1.5 text-left"
                     >
-                      {/* Option 1: At 1,999 for 18 months */}
+                      {/* Option 1: At 199 for 1 month */}
                       <Link
-                        href="/signup?plan=18m"
+                        href="/signup?plan=1m"
                         onClick={() => setPricingDropdownOpen(false)}
                         className="group flex items-center justify-between p-3 rounded-xl hover:bg-emerald-50 border border-transparent hover:border-black/10 transition-all cursor-pointer"
                       >
                         <div>
                           <p className="text-xs sm:text-[13px] font-black text-black group-hover:text-[#15803D] transition-colors">
-                            At 1,999 for 18 months
+                            At 199 for 1 month
                           </p>
                           <p className="text-[11px] text-slate-500 font-semibold">
-                            ₹111/mo • 18 Months License
+                            ₹199/mo • 1 Month Access
                           </p>
                         </div>
                         <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#15803D] group-hover:translate-x-1 transition-all shrink-0" />
                       </Link>
 
-                      {/* Option 2: At 2,499 for 24 months */}
+                      {/* Option 2: At 574 for 3 months */}
                       <Link
-                        href="/signup?plan=24m"
+                        href="/signup?plan=3m"
+                        onClick={() => setPricingDropdownOpen(false)}
+                        className="group flex items-center justify-between p-3 rounded-xl hover:bg-emerald-50 border border-transparent hover:border-black/10 transition-all cursor-pointer"
+                      >
+                        <div>
+                          <p className="text-xs sm:text-[13px] font-black text-black group-hover:text-[#15803D] transition-colors">
+                            At 574 for 3 months
+                          </p>
+                          <p className="text-[11px] text-slate-500 font-semibold">
+                            ₹191/mo • 3 Months Access
+                          </p>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#15803D] group-hover:translate-x-1 transition-all shrink-0" />
+                      </Link>
+
+                      {/* Option 3: At 1,099 for 6 months */}
+                      <Link
+                        href="/signup?plan=6m"
+                        onClick={() => setPricingDropdownOpen(false)}
+                        className="group flex items-center justify-between p-3 rounded-xl hover:bg-emerald-50 border border-transparent hover:border-black/10 transition-all cursor-pointer"
+                      >
+                        <div>
+                          <p className="text-xs sm:text-[13px] font-black text-black group-hover:text-[#15803D] transition-colors">
+                            At 1,099 for 6 months
+                          </p>
+                          <p className="text-[11px] text-slate-500 font-semibold">
+                            ₹183/mo • 6 Months Access
+                          </p>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#15803D] group-hover:translate-x-1 transition-all shrink-0" />
+                      </Link>
+
+                      {/* Option 4: At 2,000 for 1 year */}
+                      <Link
+                        href="/signup?plan=1y"
                         onClick={() => setPricingDropdownOpen(false)}
                         className="group flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-[#15803D]/30 transition-all cursor-pointer relative"
                       >
                         <div>
                           <div className="flex items-center gap-1.5 mb-0.5">
                             <span className="text-[9.5px] font-black uppercase tracking-wider bg-[#15803D] text-white px-1.5 py-0.2 rounded">
-                              Most Popular
+                              Best Value
                             </span>
-                            <span className="text-[10px] font-bold text-emerald-800">Best Value</span>
+                            <span className="text-[10px] font-bold text-emerald-800">Lowest Monthly Rate</span>
                           </div>
                           <p className="text-xs sm:text-[13px] font-black text-black group-hover:text-[#15803D] transition-colors">
-                            At 2,499 for 24 months
+                            At 2,000 for 1 year
                           </p>
                           <p className="text-[11px] text-slate-600 font-semibold">
-                            ₹104/mo • 2 Full Years
+                            ₹166/mo • 1 Full Year
                           </p>
                         </div>
                         <ArrowRight className="w-4 h-4 text-[#15803D] group-hover:translate-x-1 transition-all shrink-0" />
-                      </Link>
-
-                      {/* Option 3: At 3,499 for 48 months */}
-                      <Link
-                        href="/signup?plan=48m"
-                        onClick={() => setPricingDropdownOpen(false)}
-                        className="group flex items-center justify-between p-3 rounded-xl hover:bg-emerald-50 border border-transparent hover:border-black/10 transition-all cursor-pointer"
-                      >
-                        <div>
-                          <div className="flex items-center gap-1.5 mb-0.5">
-                            <span className="text-[9.5px] font-black uppercase tracking-wider bg-black text-white px-1.5 py-0.2 rounded">
-                              Max Savings
-                            </span>
-                            <span className="text-[10px] font-bold text-slate-700">₹72/mo only</span>
-                          </div>
-                          <p className="text-xs sm:text-[13px] font-black text-black group-hover:text-[#15803D] transition-colors">
-                            At 3,499 for 48 months
-                          </p>
-                          <p className="text-[11px] text-slate-500 font-semibold">
-                            ₹72/mo • 4 Full Years
-                          </p>
-                        </div>
-                        <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#15803D] group-hover:translate-x-1 transition-all shrink-0" />
                       </Link>
 
                       <div className="pt-2 border-t border-black/10 flex items-center justify-between px-2 text-[11px]">
@@ -459,7 +470,7 @@ export default function LandingPage() {
                           onClick={() => setPricingDropdownOpen(false)}
                           className="font-bold text-slate-600 hover:text-black underline underline-offset-2 flex items-center gap-1"
                         >
-                          Compare all 3 plans ↓
+                          Compare all 4 plans ↓
                         </a>
                         <span className="text-slate-400 font-medium">Instant Activation</span>
                       </div>
@@ -878,7 +889,7 @@ export default function LandingPage() {
 
       {/* 
         ========================================================================
-        PRICING CARDS (3 Tiers: 18 Months, 24 Months, 48 Months)
+        PRICING CARDS (4 Tiers: 1 Month, 3 Months, 6 Months, 1 Year)
         ========================================================================
       */}
       <motion.section
@@ -887,7 +898,7 @@ export default function LandingPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.5 }}
-        className="py-14 sm:py-20 px-4 sm:px-8 max-w-6xl mx-auto text-center space-y-8"
+        className="py-14 sm:py-20 px-4 sm:px-6 max-w-7xl mx-auto text-center space-y-8"
       >
         <div className="space-y-3 max-w-2xl mx-auto">
           <span className="text-xs font-black text-[#15803D] uppercase tracking-widest bg-[#dcfce7] px-3.5 py-1 rounded-full border-2 border-black shadow-[2px_2px_0px_#000000] inline-block">
@@ -897,11 +908,11 @@ export default function LandingPage() {
             Choose the Perfect Plan for Your Business
           </h2>
           <p className="text-xs sm:text-sm font-medium text-slate-600">
-            No monthly subscription traps. Unlimited QR scans, AI review generation, and print-ready standees.
+            Zero hidden charges. Unlimited QR scans, AI review generation, and print-ready standees for your chosen duration.
           </p>
         </div>
 
-        {/* 3 Pricing Cards: Auto-Scroll Carousel on Mobile, Bento Grid on Desktop */}
+        {/* 4 Pricing Cards: Auto-Scroll Carousel on Mobile, Responsive Grid on Tablet/Desktop */}
         <div
           ref={pricingCarouselRef}
           onScroll={handlePricingScroll}
@@ -909,45 +920,44 @@ export default function LandingPage() {
           onTouchEnd={() => setTimeout(() => setIsPricingInteracting(false), 4000)}
           onMouseEnter={() => setIsPricingInteracting(true)}
           onMouseLeave={() => setIsPricingInteracting(false)}
-          className="flex md:grid md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 items-stretch pt-4 text-left overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-smooth no-scrollbar pb-6 px-4 md:px-0 -mx-4 md:mx-0"
+          className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 items-stretch pt-4 text-left overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-smooth no-scrollbar pb-6 px-4 md:px-0 -mx-4 md:mx-0"
         >
           
-          {/* CARD 1: At 1,999 for 18 months */}
+          {/* CARD 1: At 199 for 1 month */}
           <motion.div
-            id="pricing-card-18m"
+            id="pricing-card-1m"
             whileHover={{ y: -5 }}
             transition={{ duration: 0.2 }}
-            className="w-[85vw] max-w-[340px] sm:w-[360px] md:w-auto md:max-w-none shrink-0 md:shrink snap-center bg-white border-2 border-black rounded-[28px] p-6 sm:p-7 space-y-5 flex flex-col justify-between shadow-[5px_5px_0px_#000000]"
+            className="w-[82vw] max-w-[320px] sm:w-[340px] md:w-auto md:max-w-none shrink-0 md:shrink snap-center bg-white border-2 border-black rounded-[28px] p-5 sm:p-6 space-y-5 flex flex-col justify-between shadow-[5px_5px_0px_#000000]"
           >
             <div className="space-y-4">
               <div className="space-y-1">
                 <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full border border-black/10 inline-block">
-                  Standard Plan
+                  Starter Plan
                 </span>
-                <h3 className="text-lg sm:text-xl font-black text-black">18 Months Access</h3>
-                <p className="text-xs text-slate-500 font-medium">Ideal for single-location cafes, shops & clinics</p>
+                <h3 className="text-lg sm:text-xl font-black text-black">1 Month Access</h3>
+                <p className="text-xs text-slate-500 font-medium">Try all features and collect your first 5-star reviews</p>
               </div>
 
               <div className="pt-2 border-t border-black/10">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-sm line-through text-slate-400 font-bold">₹3,999</span>
-                  <span className="text-3xl font-black text-black tracking-tight">₹1,999</span>
-                  <span className="text-xs font-bold text-slate-600">/ 18 months</span>
+                  <span className="text-3xl font-black text-black tracking-tight">₹199</span>
+                  <span className="text-xs font-bold text-slate-600">/ 1 month</span>
                 </div>
                 <p className="text-[11.5px] font-bold text-[#15803D] mt-1">
-                  At 1,999 for 18 months (Just ₹111/mo)
+                  At 199 for 1 month (₹199/mo)
                 </p>
               </div>
 
-              <ul className="space-y-2.5 text-xs text-slate-800 pt-2 border-t border-black/10">
+              <ul className="space-y-2 text-xs text-slate-800 pt-2 border-t border-black/10">
                 {[
-                  "18 Months Full Software License",
-                  "Unlimited QR Camera Scans & Handoffs",
+                  "1 Month Full Software License",
+                  "Unlimited QR Camera Scans",
                   "Ready-to-Print 4\" x 6\" Standee Studio",
-                  "AI Review Assistant (Gemini Flash + NLP)",
+                  "AI Review Assistant (Gemini Flash)",
                   "Custom Service Keywords & Topics",
-                  "Live Conversion Analytics Dashboard",
-                  "Private Grievance Inbox (Google Compliant)",
+                  "Live Conversion Dashboard",
+                  "Private Grievance Inbox",
                   "Standard Email & Chat Support",
                 ].map((f) => (
                   <li key={f} className="flex items-start gap-2">
@@ -961,56 +971,171 @@ export default function LandingPage() {
             <div className="space-y-2 pt-4">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Link
-                  href="/signup?plan=18m"
+                  href="/signup?plan=1m"
                   className="w-full py-3.5 bg-white hover:bg-slate-50 text-black rounded-full font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-2 border-black shadow-[3px_3px_0px_#000000] transition-shadow text-center cursor-pointer"
                 >
-                  Get At 1,999 for 18 months <ArrowRight className="w-4 h-4" />
+                  Get At 199 for 1 month <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
-              <p className="text-center text-[10px] text-slate-400 font-semibold">One-time payment • No auto-debit</p>
+              <p className="text-center text-[10px] text-slate-400 font-semibold">Instant activation via UPI & Cards</p>
             </div>
           </motion.div>
 
-          {/* CARD 2: At 2,499 for 24 months (BEST VALUE / MOST POPULAR) */}
+          {/* CARD 2: At 574 for 3 months */}
           <motion.div
-            id="pricing-card-24m"
+            id="pricing-card-3m"
+            whileHover={{ y: -5 }}
+            transition={{ duration: 0.2 }}
+            className="w-[82vw] max-w-[320px] sm:w-[340px] md:w-auto md:max-w-none shrink-0 md:shrink snap-center bg-white border-2 border-black rounded-[28px] p-5 sm:p-6 space-y-5 flex flex-col justify-between shadow-[5px_5px_0px_#000000]"
+          >
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full border border-black/10 inline-block">
+                  Quarterly Plan
+                </span>
+                <h3 className="text-lg sm:text-xl font-black text-black">3 Months Access</h3>
+                <p className="text-xs text-slate-500 font-medium">Build strong review momentum across 90 days</p>
+              </div>
+
+              <div className="pt-2 border-t border-black/10">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-black text-black tracking-tight">₹574</span>
+                  <span className="text-xs font-bold text-slate-600">/ 3 months</span>
+                </div>
+                <p className="text-[11.5px] font-bold text-[#15803D] mt-1">
+                  At 574 for 3 months (Just ₹191/mo)
+                </p>
+              </div>
+
+              <ul className="space-y-2 text-xs text-slate-800 pt-2 border-t border-black/10">
+                {[
+                  "3 Months Full Software Access",
+                  "Everything in 1 Month Plan",
+                  "Unlimited Multi-Standee Prints",
+                  "Fast AI Review Engine",
+                  "Google Maps Keyword Booster",
+                  "Sentiment Analytics & Insights",
+                  "Private Grievance Alert Channel",
+                  "Priority Email & Chat Support",
+                ].map((f) => (
+                  <li key={f} className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0 mt-0.5" />
+                    <span className="font-semibold text-slate-800">{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="space-y-2 pt-4">
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Link
+                  href="/signup?plan=3m"
+                  className="w-full py-3.5 bg-white hover:bg-slate-50 text-black rounded-full font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-2 border-black shadow-[3px_3px_0px_#000000] transition-shadow text-center cursor-pointer"
+                >
+                  Get At 574 for 3 months <ArrowRight className="w-4 h-4" />
+                </Link>
+              </motion.div>
+              <p className="text-center text-[10px] text-slate-400 font-semibold">One-time payment • No recurring trap</p>
+            </div>
+          </motion.div>
+
+          {/* CARD 3: At 1,099 for 6 months */}
+          <motion.div
+            id="pricing-card-6m"
+            whileHover={{ y: -5 }}
+            transition={{ duration: 0.2 }}
+            className="w-[82vw] max-w-[320px] sm:w-[340px] md:w-auto md:max-w-none shrink-0 md:shrink snap-center bg-white border-2 border-black rounded-[28px] p-5 sm:p-6 space-y-5 flex flex-col justify-between shadow-[5px_5px_0px_#000000]"
+          >
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <span className="text-[11px] font-black uppercase tracking-wider text-[#15803D] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-[#15803D]/30 inline-block">
+                  Half-Yearly Plan
+                </span>
+                <h3 className="text-lg sm:text-xl font-black text-black">6 Months Access</h3>
+                <p className="text-xs text-slate-500 font-medium">Consistent local SEO growth with lower monthly rate</p>
+              </div>
+
+              <div className="pt-2 border-t border-black/10">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-black text-black tracking-tight">₹1,099</span>
+                  <span className="text-xs font-bold text-slate-600">/ 6 months</span>
+                </div>
+                <p className="text-[11.5px] font-bold text-[#15803D] mt-1">
+                  At 1,099 for 6 months (Only ₹183/mo)
+                </p>
+              </div>
+
+              <ul className="space-y-2 text-xs text-slate-800 pt-2 border-t border-black/10">
+                {[
+                  "6 Months Extended Software Access",
+                  "Everything in 3 Months Plan",
+                  "Priority AI Review Generation",
+                  "Unlimited Multi-Counter QR Prints",
+                  "Detailed Rating Trends Analytics",
+                  "Real-time Grievance Notification",
+                  "Custom Standee Theme Tweaks",
+                  "Priority WhatsApp Support",
+                ].map((f) => (
+                  <li key={f} className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0 mt-0.5" />
+                    <span className="font-semibold text-slate-800">{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="space-y-2 pt-4">
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Link
+                  href="/signup?plan=6m"
+                  className="w-full py-3.5 bg-white hover:bg-slate-50 text-black rounded-full font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-2 border-black shadow-[3px_3px_0px_#000000] transition-shadow text-center cursor-pointer"
+                >
+                  Get At 1,099 for 6 months <ArrowRight className="w-4 h-4" />
+                </Link>
+              </motion.div>
+              <p className="text-center text-[10px] text-slate-400 font-semibold">Instant activation via UPI & Cards</p>
+            </div>
+          </motion.div>
+
+          {/* CARD 4: At 2,000 for 1 year (BEST VALUE) */}
+          <motion.div
+            id="pricing-card-1y"
             whileHover={{ y: -6 }}
             transition={{ duration: 0.2 }}
-            className="w-[85vw] max-w-[340px] sm:w-[360px] md:w-auto md:max-w-none shrink-0 md:shrink snap-center bg-white border-[3px] border-black rounded-[30px] p-6 sm:p-7 space-y-5 flex flex-col justify-between shadow-[8px_8px_0px_#15803D] relative md:-translate-y-2"
+            className="w-[82vw] max-w-[320px] sm:w-[340px] md:w-auto md:max-w-none shrink-0 md:shrink snap-center bg-white border-[3px] border-black rounded-[30px] p-5 sm:p-6 space-y-5 flex flex-col justify-between shadow-[8px_8px_0px_#15803D] relative md:-translate-y-2"
           >
             {/* Top Badge */}
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#15803D] text-white text-[11px] font-black uppercase tracking-wider px-3.5 py-1 rounded-full border-2 border-black shadow-[2px_2px_0px_#000000] whitespace-nowrap">
-              ★ Most Popular • Best Value
+              ★ Best Value • 1 Full Year
             </div>
 
             <div className="space-y-4">
               <div className="space-y-1 pt-1">
                 <span className="text-[11px] font-black uppercase tracking-wider text-[#15803D] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-[#15803D]/30 inline-block">
-                  Growth Plan • 2 Full Years
+                  Annual Plan • Maximum Savings
                 </span>
-                <h3 className="text-xl sm:text-2xl font-black text-black">24 Months Access</h3>
-                <p className="text-xs text-slate-500 font-medium">Most chosen by high-growth cafes, restaurants & salons</p>
+                <h3 className="text-xl sm:text-2xl font-black text-black">1 Year Access</h3>
+                <p className="text-xs text-slate-500 font-medium">Most chosen by high-growth cafes, restaurants & clinics</p>
               </div>
 
               <div className="pt-2 border-t border-black/10">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-sm line-through text-slate-400 font-bold">₹5,999</span>
-                  <span className="text-3xl sm:text-4xl font-black text-[#15803D] tracking-tight">₹2,499</span>
-                  <span className="text-xs font-bold text-slate-600">/ 24 months</span>
+                  <span className="text-3xl sm:text-4xl font-black text-[#15803D] tracking-tight">₹2,000</span>
+                  <span className="text-xs font-bold text-slate-600">/ 1 year</span>
                 </div>
                 <p className="text-[11.5px] font-black text-black mt-1">
-                  At 2,499 for 24 months (Only ₹104/mo • Save 58%)
+                  At 2,000 for 1 year (Lowest rate: ₹166/mo)
                 </p>
               </div>
 
-              <ul className="space-y-2.5 text-xs text-slate-800 pt-2 border-t border-black/10">
+              <ul className="space-y-2 text-xs text-slate-800 pt-2 border-t border-black/10">
                 {[
-                  "Everything in 18 Months Plan",
-                  "24 Months Extended License (2 Full Years)",
-                  "Unlimited Multi-Standee Prints & Tents",
-                  "Priority AI Review Generation Engine",
-                  "Google Maps Local SEO Keyword Booster",
-                  "Multi-Counter QR Placement Studio",
+                  "1 Full Year Software Access",
+                  "Everything in 6 Months Plan",
+                  "Lowest Rate: Just ₹166/month",
+                  "Unlimited Multi-Branch & Table QRs",
+                  "VIP Priority AI Review Assistant",
+                  "Google Maps Local SEO Keyword Suite",
                   "Priority Business WhatsApp Support",
                   "Free Standee Design Customization",
                 ].map((f, i) => (
@@ -1025,72 +1150,13 @@ export default function LandingPage() {
             <div className="space-y-2 pt-4">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Link
-                  href="/signup?plan=24m"
+                  href="/signup?plan=1y"
                   className="w-full py-4 bg-[#15803D] hover:bg-[#166534] text-white rounded-full font-black text-sm flex items-center justify-center gap-2 border-2 border-black shadow-[4px_4px_0px_#000000] transition-shadow text-center cursor-pointer"
                 >
-                  Get At 2,499 for 24 months <ArrowRight className="w-4 h-4" />
+                  Get At 2,000 for 1 year <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
               <p className="text-center text-[10px] text-slate-500 font-bold">Instant activation via UPI, QR & Cards</p>
-            </div>
-          </motion.div>
-
-          {/* CARD 3: At 3,499 for 48 months (MAXIMUM SAVINGS) */}
-          <motion.div
-            id="pricing-card-48m"
-            whileHover={{ y: -5 }}
-            transition={{ duration: 0.2 }}
-            className="w-[85vw] max-w-[340px] sm:w-[360px] md:w-auto md:max-w-none shrink-0 md:shrink snap-center bg-white border-2 border-black rounded-[28px] p-6 sm:p-7 space-y-5 flex flex-col justify-between shadow-[5px_5px_0px_#000000]"
-          >
-            <div className="space-y-4">
-              <div className="space-y-1">
-                <span className="text-[11px] font-black uppercase tracking-wider text-black bg-amber-100 px-2.5 py-0.5 rounded-full border border-black/20 inline-block">
-                  Maximum Savings • 4 Years
-                </span>
-                <h3 className="text-lg sm:text-xl font-black text-black">48 Months Access</h3>
-                <p className="text-xs text-slate-500 font-medium">Long-term dominance with lowest monthly cost</p>
-              </div>
-
-              <div className="pt-2 border-t border-black/10">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-sm line-through text-slate-400 font-bold">₹9,999</span>
-                  <span className="text-3xl font-black text-black tracking-tight">₹3,499</span>
-                  <span className="text-xs font-bold text-slate-600">/ 48 months</span>
-                </div>
-                <p className="text-[11.5px] font-bold text-[#15803D] mt-1">
-                  At 3,499 for 48 months (Lowest rate: ₹72/mo)
-                </p>
-              </div>
-
-              <ul className="space-y-2.5 text-xs text-slate-800 pt-2 border-t border-black/10">
-                {[
-                  "Everything in 24 Months Plan",
-                  "48 Months Extended Access (4 Full Years)",
-                  "Lowest Cost: Just ₹72/month rate",
-                  "Unlimited Multi-Branch & Table QR Generation",
-                  "Zero Renewal Price Hikes Forever",
-                  "VIP Priority Tech & Design Support",
-                  "All Future Software Upgrades Included",
-                  "Dedicated Account Manager Assistance",
-                ].map((f, i) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0 mt-0.5" />
-                    <span className={i < 2 ? "font-black text-black" : "font-semibold text-slate-800"}>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-2 pt-4">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Link
-                  href="/signup?plan=48m"
-                  className="w-full py-3.5 bg-black hover:bg-neutral-800 text-white rounded-full font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-2 border-black shadow-[3px_3px_0px_#000000] transition-shadow text-center cursor-pointer"
-                >
-                  Get At 3,499 for 48 months <ArrowRight className="w-4 h-4" />
-                </Link>
-              </motion.div>
-              <p className="text-center text-[10px] text-slate-400 font-semibold">Maximum peace of mind for 4 full years</p>
             </div>
           </motion.div>
 
@@ -1098,10 +1164,10 @@ export default function LandingPage() {
 
         {/* Mobile Carousel Controls & Interactive Dot Indicators (md:hidden) */}
         <div className="flex md:hidden flex-col items-center justify-center gap-2.5 pt-1">
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-center gap-1.5 flex-wrap">
             <button
               type="button"
-              onClick={() => scrollToPricingSlide((activePricingSlide - 1 + 3) % 3)}
+              onClick={() => scrollToPricingSlide((activePricingSlide - 1 + 4) % 4)}
               className="p-1.5 rounded-full border-2 border-black bg-white hover:bg-slate-100 shadow-[1px_1px_0px_#000000] active:translate-x-[1px] active:translate-y-[1px]"
               aria-label="Previous plan"
             >
@@ -1109,15 +1175,16 @@ export default function LandingPage() {
             </button>
 
             {[
-              { label: "18M", price: "₹1,999" },
-              { label: "24M", price: "₹2,499", popular: true },
-              { label: "48M", price: "₹3,499" },
+              { label: "1M", price: "₹199" },
+              { label: "3M", price: "₹574" },
+              { label: "6M", price: "₹1,099" },
+              { label: "1Y", price: "₹2,000", popular: true },
             ].map((p, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => scrollToPricingSlide(idx)}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black transition-all border-2 border-black ${
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black transition-all border-2 border-black ${
                   activePricingSlide === idx
                     ? "bg-[#15803D] text-white shadow-[2px_2px_0px_#000000] scale-105"
                     : "bg-white text-slate-700 hover:bg-slate-100 shadow-[1px_1px_0px_#000000]"
@@ -1131,7 +1198,7 @@ export default function LandingPage() {
 
             <button
               type="button"
-              onClick={() => scrollToPricingSlide((activePricingSlide + 1) % 3)}
+              onClick={() => scrollToPricingSlide((activePricingSlide + 1) % 4)}
               className="p-1.5 rounded-full border-2 border-black bg-white hover:bg-slate-100 shadow-[1px_1px_0px_#000000] active:translate-x-[1px] active:translate-y-[1px]"
               aria-label="Next plan"
             >
@@ -1141,7 +1208,7 @@ export default function LandingPage() {
 
           <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#15803D] animate-pulse" />
-            <span>Auto-scrolling • Swipe to explore ({activePricingSlide + 1} of 3)</span>
+            <span>Auto-scrolling • Swipe to explore ({activePricingSlide + 1} of 4)</span>
           </div>
         </div>
       </motion.section>
@@ -1234,7 +1301,7 @@ export default function LandingPage() {
                 href="/#pricing"
                 className="w-full sm:w-auto px-8 py-4 bg-[#15803D] hover:bg-[#166534] text-white font-black rounded-full text-sm sm:text-base border-2 border-black shadow-[4px_4px_0px_#000000] transition-shadow text-center inline-flex items-center justify-center gap-2"
               >
-                Choose Your Plan (From ₹1,999) <ArrowRight className="w-4 h-4" />
+                Choose Your Plan (From ₹199) <ArrowRight className="w-4 h-4" />
               </Link>
             </motion.div>
           </div>
@@ -1265,11 +1332,10 @@ export default function LandingPage() {
       <div className="md:hidden fixed bottom-0 left-0 right-0 px-4 py-2.5 pb-[max(0.6rem,env(safe-area-inset-bottom))] bg-white/95 backdrop-blur-md border-t-2 border-black z-50 flex items-center justify-between gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.12)]">
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[11px] line-through text-slate-400 font-bold">₹3,999</span>
-            <span className="text-sm font-black text-black">From ₹1,999</span>
+            <span className="text-sm font-black text-black">From ₹199</span>
           </div>
           <span className="text-[10px] font-bold text-slate-500 truncate">
-            18, 24 or 48 Months Plans
+            1, 3, 6 or 12 Months Plans
           </span>
         </div>
 

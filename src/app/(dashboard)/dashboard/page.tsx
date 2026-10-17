@@ -204,7 +204,7 @@ export default function DashboardPage() {
             <span className="text-xs font-medium text-slate-300 capitalize shrink-0">{business.category}</span>
             <span className="text-xs text-slate-400 hidden sm:inline">•</span>
             <span className="text-xs font-semibold text-amber-300 inline-flex items-center gap-1 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20 shrink-0">
-              <Star className="w-3 h-3 fill-amber-300" /> {business.planName || "Lifetime Pro Active"}
+              <Star className="w-3 h-3 fill-amber-300" /> {business.planName || "Pro Plan Active"}
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight truncate">{business.name}</h1>

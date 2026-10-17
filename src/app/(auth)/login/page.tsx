@@ -232,7 +232,7 @@ export default function LoginPage() {
         <p className="text-xs text-slate-500 font-medium">
           Don't have an account yet?{" "}
           <Link href="/signup" className="font-bold text-black underline decoration-2 hover:text-[#15803D]">
-            Claim ₹1,999 only Lifetime License
+            Get Started (Plans from ₹199)
           </Link>
         </p>
       </main>

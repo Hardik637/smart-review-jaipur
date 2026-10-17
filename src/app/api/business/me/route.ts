@@ -231,7 +231,7 @@ export async function GET(req: NextRequest) {
         isPro: isProAccount,
         trialEndsAt: business.trialEndsAt,
         isTrialActive,
-        planName: business.planName || (isTrialActive ? "7-Day VIP Free Trial" : "lifetime"),
+        planName: business.planName || (isTrialActive ? "Pro Trial" : "pro"),
         monthlyAiQuota: business.monthlyAiQuota || 10000,
         aiCallsThisMonth: business.aiCallsThisMonth || 0,
         services: safeServices,

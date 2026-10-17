@@ -25,25 +25,30 @@ export async function POST(req: NextRequest | Request) {
     const requestedPlan = (body?.planType || "").toLowerCase();
 
     // Multi-tier pricing plans:
-    // - 18 Months: ₹1,999 (199900 paise)
-    // - 24 Months: ₹2,499 (249900 paise)
-    // - 48 Months: ₹3,499 (349900 paise)
-    let amountInPaise = 199900;
-    let planLabel = "18 Months Access (₹1,999)";
-    let planType = "18m";
+    // - 1 Month: ₹199 (19900 paise)
+    // - 3 Months: ₹574 (57400 paise)
+    // - 6 Months: ₹1,099 (109900 paise)
+    // - 1 Year: ₹2,000 (200000 paise)
+    let amountInPaise = 200000;
+    let planLabel = "1 Year Access (₹2,000)";
+    let planType = "1y";
 
-    if (requestedPlan === "24m" || requestedPlan === "24months") {
-      amountInPaise = 249900;
-      planLabel = "24 Months Access (₹2,499)";
-      planType = "24m";
-    } else if (requestedPlan === "48m" || requestedPlan === "48months") {
-      amountInPaise = 349900;
-      planLabel = "48 Months Access (₹3,499)";
-      planType = "48m";
-    } else if (requestedPlan === "lifetime" || requestedPlan === "18m" || requestedPlan === "18months") {
-      amountInPaise = 199900;
-      planLabel = "18 Months Access (₹1,999)";
-      planType = "18m";
+    if (requestedPlan === "1m" || requestedPlan === "1month") {
+      amountInPaise = 19900;
+      planLabel = "1 Month Access (₹199)";
+      planType = "1m";
+    } else if (requestedPlan === "3m" || requestedPlan === "3months") {
+      amountInPaise = 57400;
+      planLabel = "3 Months Access (₹574)";
+      planType = "3m";
+    } else if (requestedPlan === "6m" || requestedPlan === "6months") {
+      amountInPaise = 109900;
+      planLabel = "6 Months Access (₹1,099)";
+      planType = "6m";
+    } else if (requestedPlan === "1y" || requestedPlan === "1year" || requestedPlan === "12m") {
+      amountInPaise = 200000;
+      planLabel = "1 Year Access (₹2,000)";
+      planType = "1y";
     }
 
     const key_id =

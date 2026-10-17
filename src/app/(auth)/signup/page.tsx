@@ -84,13 +84,13 @@ export default function SignupPage() {
         {/* Title Header */}
         <div className="space-y-2">
           <span className="text-[11px] font-black uppercase tracking-widest bg-[#dcfce7] text-[#15803D] border-2 border-black px-3 py-1 rounded-full shadow-[2px_2px_0px_#000000] inline-block">
-            ★ Lifetime License Deal
+            ★ Professional Business Plans
           </span>
           <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
             Claim Your Business License
           </h1>
           <p className="text-xs sm:text-[13px] text-slate-600 font-medium">
-            One-time ₹1,999 only • Lifetime Access • Zero Monthly Fees
+            Starting from ₹199 • 30-Second AI Review Assistant • Instant Setup
           </p>
         </div>
 
