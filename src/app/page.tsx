@@ -16,20 +16,20 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Menu,
-  X,
   Copy,
   Check,
   Play,
   Pause,
   Volume2,
-  VolumeX
+  VolumeX,
+  User,
+  LogOut,
+  LayoutDashboard
 } from "lucide-react";
 import WelurikLogo from "@/components/Logo";
 
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [pricingDropdownOpen, setPricingDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pricingCarouselRef = useRef<HTMLDivElement>(null);
@@ -39,11 +39,50 @@ export default function LandingPage() {
   const [isMuted, setIsMuted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Close pricing dropdown when clicking outside
+  const [currentUser, setCurrentUser] = useState<{ email?: string; businessSlug?: string } | null>(null);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Check user authentication status on landing page
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && data?.authenticated && data?.user) {
+          setCurrentUser(data.user);
+        } else if (isMounted) {
+          setCurrentUser(null);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setCurrentUser(null);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      setCurrentUser(null);
+      setUserDropdownOpen(false);
+      window.location.href = "/login";
+    }
+  };
+
+  // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setPricingDropdownOpen(false);
+      }
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -185,118 +224,93 @@ export default function LandingPage() {
           initial={{ y: -25, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full bg-white border-2 border-black rounded-full px-3.5 sm:px-6 py-1.5 sm:py-2.5 shadow-[3px_3px_0px_#000000] sm:shadow-[4px_4px_0px_#000000] flex items-center justify-between"
+          className="w-full bg-white border-2 border-black rounded-full px-3.5 sm:px-6 py-2 sm:py-2.5 shadow-[3px_3px_0px_#000000] sm:shadow-[4px_4px_0px_#000000] flex items-center justify-between"
         >
           {/* Brand Logo */}
           <Link href="/" className="group hover:opacity-90 transition-opacity flex items-center">
             <WelurikLogo className="h-7 sm:h-9" />
           </Link>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-7 text-[13.5px] font-semibold text-slate-700">
-            <Link href="/#how-it-works" className="hover:text-black transition-colors">How It Works</Link>
-            <Link href="/#features" className="hover:text-black transition-colors">Features</Link>
-            <Link href="/#pricing" className="hover:text-black transition-colors">Pricing</Link>
-            <Link href="/#faq" className="hover:text-black transition-colors">FAQ</Link>
-            <Link href="/r/welurik-media" className="text-[#15803D] font-bold hover:text-[#166534] transition-colors">Demo</Link>
-            <Link href="/dashboard" className="hover:text-black transition-colors">Admin Dashboard</Link>
-          </nav>
-
           {/* Action / Auth Buttons */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Admin Dashboard Option */}
             <Link
-              href="/login"
-              className="text-sm sm:text-[15px] font-black text-black hover:text-slate-600 transition-colors px-2.5 py-1.5"
+              href="/dashboard"
+              className="text-xs sm:text-[14px] font-bold text-neutral-800 hover:text-black transition-colors px-2 sm:px-3 py-1.5"
             >
-              Sign In
+              Admin Dashboard
             </Link>
 
-            {/* Desktop Only: Get Started Button with tactile spring */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                href="/signup"
-                className="hidden md:inline-flex text-[13px] font-bold text-white bg-black hover:bg-neutral-800 px-5 py-2 rounded-full border border-black shadow-[2px_2px_0px_#000000] transition-all"
-              >
-                Get Started
-              </Link>
-            </motion.div>
+            {/* When NOT logged in: Show Get Started button */}
+            {!currentUser && (
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  href="/signup"
+                  className="inline-flex text-xs sm:text-[13px] font-bold text-white bg-black hover:bg-neutral-800 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full border border-black shadow-[2px_2px_0px_#000000] transition-all"
+                >
+                  Get Started
+                </Link>
+              </motion.div>
+            )}
 
-            {/* Mobile Hamburger Toggle */}
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-1 text-black hover:bg-slate-100 rounded-full transition-colors"
-              aria-label="Toggle navigation menu"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {/* When LOGGED IN: Remove Get Started, Show Profile Avatar with Dropdown */}
+            {currentUser && (
+              <div className="relative" ref={userDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#15803D] text-white font-black flex items-center justify-center border-2 border-black shadow-[2px_2px_0px_#000000] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  title={currentUser.email || "Profile"}
+                  aria-label="User profile menu"
+                >
+                  {currentUser.email ? (
+                    <span className="text-xs sm:text-sm font-black uppercase">
+                      {currentUser.email.charAt(0)}
+                    </span>
+                  ) : (
+                    <User className="w-4 h-4 text-white" />
+                  )}
+                </button>
+
+                {/* Profile Dropdown */}
+                <AnimatePresence>
+                  {userDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2.5 w-52 bg-white border-2 border-black rounded-2xl shadow-[4px_4px_0px_#000000] py-1.5 z-50 overflow-hidden"
+                    >
+                      <div className="px-3.5 py-2 border-b border-black/10 bg-neutral-50">
+                        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Signed in as</p>
+                        <p className="text-xs font-bold text-black truncate">{currentUser.email || "User"}</p>
+                      </div>
+
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2.5 text-xs sm:text-sm font-bold text-neutral-800 hover:bg-neutral-100 hover:text-black transition-colors"
+                      >
+                        <LayoutDashboard className="w-4 h-4 text-[#15803D]" />
+                        <span>Dashboard</span>
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs sm:text-sm font-bold text-rose-600 hover:bg-rose-50 transition-colors text-left cursor-pointer border-t border-black/10"
+                      >
+                        <LogOut className="w-4 h-4 text-rose-600" />
+                        <span>Logout</span>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
           </div>
         </motion.header>
-
-        {/* Mobile Dropdown Drawer */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-              className="md:hidden absolute top-full left-3.5 right-3.5 mt-2 bg-white border-2 border-black rounded-3xl p-4 sm:p-5 shadow-[4px_4px_0px_#000000] space-y-2.5 z-50"
-            >
-              <Link
-                href="/#how-it-works"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-1 text-sm font-bold text-black"
-              >
-                How It Works
-              </Link>
-              <Link
-                href="/#features"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-1 text-sm font-bold text-black"
-              >
-                Features
-              </Link>
-              <Link
-                href="/#pricing"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-1 text-sm font-bold text-black"
-              >
-                Pricing
-              </Link>
-              <Link
-                href="/#faq"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-1 text-sm font-bold text-black"
-              >
-                FAQ
-              </Link>
-              <Link
-                href="/r/welurik-media"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-1 text-sm font-bold text-[#15803D]"
-              >
-                Customer Demo Funnel
-              </Link>
-              <Link
-                href="/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-1 text-sm font-bold text-black"
-              >
-                Admin Dashboard
-              </Link>
-              <div className="pt-2 border-t-2 border-black/10 flex flex-col gap-2">
-                <Link
-                  href="/#pricing"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-2.5 text-center text-xs font-bold text-white bg-[#15803D] border-2 border-black rounded-full shadow-[2px_2px_0px_#000000]"
-                >
-                  View Plans (From ₹199)
-                </Link>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       {/* 
