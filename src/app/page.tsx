@@ -968,7 +968,7 @@ export default function LandingPage() {
               </ul>
             </div>
 
-            <div className="space-y-2 pt-4">
+            <div className="pt-4">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Link
                   href="/signup?plan=1m"
@@ -977,7 +977,6 @@ export default function LandingPage() {
                   Get At 199 for 1 month <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
-              <p className="text-center text-[10px] text-slate-400 font-semibold">Instant activation via UPI & Cards</p>
             </div>
           </motion.div>
 
@@ -1026,7 +1025,7 @@ export default function LandingPage() {
               </ul>
             </div>
 
-            <div className="space-y-2 pt-4">
+            <div className="pt-4">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Link
                   href="/signup?plan=3m"
@@ -1035,7 +1034,6 @@ export default function LandingPage() {
                   Get At 574 for 3 months <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
-              <p className="text-center text-[10px] text-slate-400 font-semibold">One-time payment • No recurring trap</p>
             </div>
           </motion.div>
 
@@ -1084,7 +1082,7 @@ export default function LandingPage() {
               </ul>
             </div>
 
-            <div className="space-y-2 pt-4">
+            <div className="pt-4">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Link
                   href="/signup?plan=6m"
@@ -1093,7 +1091,6 @@ export default function LandingPage() {
                   Get At 1,099 for 6 months <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
-              <p className="text-center text-[10px] text-slate-400 font-semibold">Instant activation via UPI & Cards</p>
             </div>
           </motion.div>
 
@@ -1147,7 +1144,7 @@ export default function LandingPage() {
               </ul>
             </div>
 
-            <div className="space-y-2 pt-4">
+            <div className="pt-4">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Link
                   href="/signup?plan=1y"
@@ -1156,7 +1153,6 @@ export default function LandingPage() {
                   Get At 2,000 for 1 year <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
-              <p className="text-center text-[10px] text-slate-500 font-bold">Instant activation via UPI, QR & Cards</p>
             </div>
           </motion.div>
 
