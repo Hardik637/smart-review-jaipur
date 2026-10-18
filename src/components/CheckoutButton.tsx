@@ -267,10 +267,16 @@ export function CheckoutButton({
         onClick={handleCheckout}
         disabled={loading}
         className={
-          className ||
-          "w-full py-4 px-8 bg-[#16A34A] hover:bg-[#15803D] text-white font-bold text-lg rounded-2xl shadow-xl shadow-green-600/25 border-2 border-green-500/50 hover:shadow-green-600/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+          className
+            ? `w-full transition-all flex items-center justify-center gap-2 group cursor-pointer ${
+                className.includes("bg-")
+                  ? ""
+                  : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/25"
+              } ${className}`
+            : "w-full py-4 px-8 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base rounded-2xl shadow-xl shadow-emerald-600/25 border-2 border-emerald-500/50 hover:shadow-emerald-600/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 group cursor-pointer"
         }
       >
+
         {loading ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />

@@ -684,8 +684,9 @@ export default function DashboardLayout({
 
               <CheckoutButton
                 planType={paywallPlan}
-                className="w-full py-4 text-xs font-black rounded-xl"
+                className="w-full py-3.5 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm rounded-xl shadow-lg shadow-emerald-600/25 border-2 border-emerald-500/40 hover:shadow-emerald-600/35 active:scale-[0.99] transition-all flex items-center justify-center gap-2 group cursor-pointer"
               />
+
 
 
               <div className="flex items-center justify-center gap-2 pt-1 text-[11px] text-slate-400 font-medium">
