@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
 
       // 2. If not standard Google OAuth, verify via Google Firebase Identity Toolkit
       if (!email) {
-        const fbApiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyB7nnrGVSUxVTmKw4t6qXrBVxAGbxarVvE";
+        const fbApiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyCLvs5UjkDh12b18iplyWpoUtP_PFDdzRU";
         const fbRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${fbApiKey}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -13,12 +13,13 @@ import initialData from "./initial-data.json";
 const FIREBASE_API_KEY =
   process.env.NEXT_PUBLIC_FIREBASE_API_KEY ||
   process.env.FIREBASE_API_KEY ||
-  "AIzaSyB7nnrGVSUxVTmKw4t6qXrBVxAGbxarVvE";
+  "AIzaSyCLvs5UjkDh12b18iplyWpoUtP_PFDdzRU";
 
 const FIREBASE_PROJECT_ID =
   process.env.FIREBASE_PROJECT_ID ||
   process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
-  "saas-64015";
+  "smart-review-jaipur";
+
 
 function decodeValue(val: any): any {
   if (!val) return null;
