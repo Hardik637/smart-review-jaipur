@@ -16,6 +16,8 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Menu,
+  X,
   Copy,
   Check,
   Play,
@@ -30,6 +32,7 @@ import WelurikLogo from "@/components/Logo";
 
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [pricingDropdownOpen, setPricingDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pricingCarouselRef = useRef<HTMLDivElement>(null);
@@ -224,29 +227,31 @@ export default function LandingPage() {
           initial={{ y: -25, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full bg-white border-2 border-black rounded-full px-3.5 sm:px-6 py-2 sm:py-2.5 shadow-[3px_3px_0px_#000000] sm:shadow-[4px_4px_0px_#000000] flex items-center justify-between"
+          className="w-full bg-white border-2 border-black rounded-full px-3.5 sm:px-6 py-1.5 sm:py-2.5 shadow-[3px_3px_0px_#000000] sm:shadow-[4px_4px_0px_#000000] flex items-center justify-between"
         >
           {/* Brand Logo */}
           <Link href="/" className="group hover:opacity-90 transition-opacity flex items-center">
             <WelurikLogo className="h-7 sm:h-9" />
           </Link>
 
-          {/* Action / Auth Buttons */}
-          <div className="flex items-center gap-2 sm:gap-4">
-            {/* Admin Dashboard Option */}
-            <Link
-              href="/dashboard"
-              className="text-xs sm:text-[14px] font-bold text-neutral-800 hover:text-black transition-colors px-2 sm:px-3 py-1.5"
-            >
-              Admin Dashboard
-            </Link>
+          {/* Desktop Nav Links */}
+          <nav className="hidden md:flex items-center gap-7 text-[13.5px] font-semibold text-slate-700">
+            <Link href="/#how-it-works" className="hover:text-black transition-colors">How It Works</Link>
+            <Link href="/#features" className="hover:text-black transition-colors">Features</Link>
+            <Link href="/#pricing" className="hover:text-black transition-colors">Pricing</Link>
+            <Link href="/#faq" className="hover:text-black transition-colors">FAQ</Link>
+            <Link href="/r/welurik-media" className="text-[#15803D] font-bold hover:text-[#166534] transition-colors">Demo</Link>
+            <Link href="/dashboard" className="hover:text-black transition-colors">Admin Dashboard</Link>
+          </nav>
 
-            {/* When NOT logged in: Show Get Started button */}
+          {/* Action / Auth Buttons */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* When NOT logged in: Show Get Started button (Sign In removed as requested) */}
             {!currentUser && (
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   href="/signup"
-                  className="inline-flex text-xs sm:text-[13px] font-bold text-white bg-black hover:bg-neutral-800 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full border border-black shadow-[2px_2px_0px_#000000] transition-all"
+                  className="hidden sm:inline-flex text-[13px] font-bold text-white bg-black hover:bg-neutral-800 px-5 py-2 rounded-full border border-black shadow-[2px_2px_0px_#000000] transition-all"
                 >
                   Get Started
                 </Link>
@@ -309,8 +314,105 @@ export default function LandingPage() {
                 </AnimatePresence>
               </div>
             )}
+
+            {/* Mobile Hamburger Toggle */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-1 text-black hover:bg-slate-100 rounded-full transition-colors"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </motion.header>
+
+        {/* Mobile Dropdown Drawer */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden absolute top-full left-3.5 right-3.5 mt-2 bg-white border-2 border-black rounded-3xl p-4 sm:p-5 shadow-[4px_4px_0px_#000000] space-y-2.5 z-50"
+            >
+              <Link
+                href="/#how-it-works"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-1 text-sm font-bold text-black"
+              >
+                How It Works
+              </Link>
+              <Link
+                href="/#features"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-1 text-sm font-bold text-black"
+              >
+                Features
+              </Link>
+              <Link
+                href="/#pricing"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-1 text-sm font-bold text-black"
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/#faq"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-1 text-sm font-bold text-black"
+              >
+                FAQ
+              </Link>
+              <Link
+                href="/r/welurik-media"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-1 text-sm font-bold text-[#15803D]"
+              >
+                Customer Demo Funnel
+              </Link>
+              <Link
+                href="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-1 text-sm font-bold text-black"
+              >
+                Admin Dashboard
+              </Link>
+              <div className="pt-2 border-t-2 border-black/10 flex flex-col gap-2">
+                {!currentUser ? (
+                  <Link
+                    href="/signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full py-2.5 text-center text-xs font-bold text-white bg-black border-2 border-black rounded-full shadow-[2px_2px_0px_#000000]"
+                  >
+                    Get Started
+                  </Link>
+                ) : (
+                  <div className="space-y-2">
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full py-2.5 text-center text-xs font-bold text-white bg-[#15803D] border-2 border-black rounded-full shadow-[2px_2px_0px_#000000] block"
+                    >
+                      Open Dashboard
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full py-2 text-center text-xs font-bold text-rose-600 border-2 border-rose-600 bg-rose-50 rounded-full"
+                    >
+                      Logout ({currentUser.email || "User"})
+                    </button>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* 
