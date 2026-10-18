@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES, getCategoryById } from "@/lib/categories";
-import { Sparkles, ArrowRight, ShieldCheck, CheckCircle2, Check, Lock, Zap, ExternalLink, AlertCircle } from "lucide-react";
+import { Sparkles, ArrowRight, ShieldCheck, CheckCircle2, Check, Lock, Zap, ExternalLink, AlertCircle, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import WelurikLogo from "@/components/Logo";
 import { triggerBirthdayPop } from "@/components/BirthdayPopCelebration";
@@ -27,8 +27,10 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false);
   const [paymentError, setPaymentError] = useState("");
   const [onboardingPlan, setOnboardingPlan] = useState<"1m" | "3m" | "6m" | "1y">("1y");
+  const [onboardingAutoPay, setOnboardingAutoPay] = useState(true);
 
   // Promo Code States
+
   const [promoCode, setPromoCode] = useState("");
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoError, setPromoError] = useState("");
@@ -214,16 +216,49 @@ export default function OnboardingPage() {
         }),
       });
 
-      // 2. Initialize Razorpay Order
+      // 2. Initialize Razorpay Order or Subscription
       const orderRes = await fetch("/api/payment/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planType: onboardingPlan }),
+        body: JSON.stringify({ planType: onboardingPlan, autoPay: onboardingAutoPay }),
       });
 
       const orderData = await orderRes.json();
       if (!orderRes.ok || !orderData.success) {
         throw new Error(orderData.error || "Could not initialize payment");
+      }
+
+      // If mock / demo mode
+      if (orderData.isMock || !orderData.keyId || orderData.keyId === "rzp_test_placeholder") {
+        const verifyPayload = orderData.isSubscription
+          ? {
+              razorpay_subscription_id: orderData.subscriptionId || `sub_demo_${Date.now()}`,
+              razorpay_payment_id: `pay_demo_${Date.now().toString().slice(-6)}`,
+              razorpay_signature: `mock_sig_${Date.now()}`,
+              planType: onboardingPlan,
+              isAutoPay: true,
+            }
+          : {
+              razorpay_order_id: orderData.orderId,
+              razorpay_payment_id: `pay_demo_${Date.now().toString().slice(-6)}`,
+              razorpay_signature: `mock_sig_${Date.now()}`,
+              planType: onboardingPlan,
+              isAutoPay: false,
+            };
+
+        const verifyRes = await fetch("/api/payment/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(verifyPayload),
+        });
+        const verifyData = await verifyRes.json();
+        if (verifyRes.ok && verifyData.success) {
+          if (typeof window !== "undefined") {
+            sessionStorage.removeItem("welurik_dashboard_cache");
+          }
+          window.location.href = "/dashboard";
+        }
+        return;
       }
 
       // 3. Load Razorpay Checkout Modal
@@ -232,25 +267,43 @@ export default function OnboardingPage() {
         throw new Error("Unable to load Razorpay payment gateway. Please check your internet connection.");
       }
 
-      const options = {
+      const baseOptions: Record<string, any> = {
         key: orderData.keyId,
-        amount: orderData.amount,
-        currency: orderData.currency || "INR",
         name: "Welurik Review",
         description: orderData.planLabel || "Welurik Review Pro Activation",
-        order_id: orderData.orderId,
         image: "/favicon.png",
-        handler: async function (response: any) {
+        prefill: {
+          email: orderData.prefill?.email || "",
+        },
+        notes: {
+          plan: onboardingPlan,
+          isAutoPay: orderData.isSubscription ? "true" : "false",
+        },
+        theme: {
+          color: "#0f172a",
+        },
+        modal: {
+          ondismiss: function () {
+            setLoading(false);
+          },
+        },
+      };
+
+      if (orderData.isSubscription && orderData.subscriptionId) {
+        // AutoPay Recurring Subscription
+        baseOptions.subscription_id = orderData.subscriptionId;
+        baseOptions.handler = async function (response: any) {
           try {
             setLoading(true);
             const verifyRes = await fetch("/api/payment/verify", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id || orderData.orderId,
+                razorpay_subscription_id: response.razorpay_subscription_id || orderData.subscriptionId,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
                 planType: onboardingPlan,
+                isAutoPay: true,
               }),
             });
 
@@ -264,25 +317,49 @@ export default function OnboardingPage() {
               setPaymentError(verifyData.error || "Payment verification failed.");
               setLoading(false);
             }
-          } catch (err: any) {
+          } catch {
             setPaymentError("Error confirming transaction.");
             setLoading(false);
           }
-        },
-        prefill: {
-          email: orderData.prefill?.email || "",
-        },
-        theme: {
-          color: "#0f172a",
-        },
-        modal: {
-          ondismiss: function () {
-            setLoading(false);
-          },
-        },
-      };
+        };
+      } else {
+        // One-Time Order
+        baseOptions.amount = orderData.amount;
+        baseOptions.currency = orderData.currency || "INR";
+        baseOptions.order_id = orderData.orderId;
+        baseOptions.handler = async function (response: any) {
+          try {
+            setLoading(true);
+            const verifyRes = await fetch("/api/payment/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id || orderData.orderId,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                planType: onboardingPlan,
+                isAutoPay: false,
+              }),
+            });
 
-      const rzp = new window.Razorpay(options);
+            const verifyData = await verifyRes.json();
+            if (verifyRes.ok && verifyData.success) {
+              if (typeof window !== "undefined") {
+                sessionStorage.removeItem("welurik_dashboard_cache");
+              }
+              window.location.href = "/dashboard";
+            } else {
+              setPaymentError(verifyData.error || "Payment verification failed.");
+              setLoading(false);
+            }
+          } catch {
+            setPaymentError("Error confirming transaction.");
+            setLoading(false);
+          }
+        };
+      }
+
+      const rzp = new window.Razorpay(baseOptions);
       rzp.on("payment.failed", function (response: any) {
         setPaymentError(response.error?.description || "Payment was not completed.");
         setLoading(false);
@@ -292,6 +369,7 @@ export default function OnboardingPage() {
       setPaymentError(err.message || "Failed to start payment checkout.");
       setLoading(false);
     }
+
   };
 
   return (
@@ -587,8 +665,38 @@ export default function OnboardingPage() {
                 })}
               </div>
 
+              {/* AutoPay / Auto-Renew Option Toggle */}
+              <div className="bg-white/95 border border-slate-200/90 rounded-2xl p-3.5 flex items-center justify-between text-left shadow-xs transition-all hover:border-emerald-300">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                    <RefreshCw className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                      <span>Enable AutoPay (Auto-Renew)</span>
+                      <span className="text-[9px] font-black bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full uppercase tracking-wider">
+                        Recommended
+                      </span>
+                    </p>
+                    <p className="text-[11px] text-slate-500 font-medium">
+                      Automatic renewal via UPI AutoPay & Cards. Zero manual renewal hassle.
+                    </p>
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0 ml-2">
+                  <input
+                    type="checkbox"
+                    checked={onboardingAutoPay}
+                    onChange={(e) => setOnboardingAutoPay(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                </label>
+              </div>
+
               {/* Ultra-Clean Modern Pricing Card */}
               <div className="bg-slate-50/90 border border-slate-200/80 rounded-2xl p-5 space-y-4 shadow-sm text-left">
+
                 <div className="flex items-center justify-between border-b border-slate-200/60 pb-3">
                   <div>
                     <h3 className="text-sm font-bold text-slate-900">
@@ -719,7 +827,7 @@ export default function OnboardingPage() {
                   ) : (
                     <>
                       <Lock className="w-3.5 h-3.5" />
-                      Pay {onboardingPlan === "1m" ? "₹199" : onboardingPlan === "3m" ? "₹574" : onboardingPlan === "6m" ? "₹1,099" : "₹2,000"} & Unlock Dashboard
+                      Pay {onboardingPlan === "1m" ? "₹199" : onboardingPlan === "3m" ? "₹574" : onboardingPlan === "6m" ? "₹1,099" : "₹2,000"} {onboardingAutoPay ? "with AutoPay & Unlock" : "& Unlock Dashboard"}
                     </>
                   )}
                 </button>

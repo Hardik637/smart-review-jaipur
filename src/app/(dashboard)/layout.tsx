@@ -684,9 +684,9 @@ export default function DashboardLayout({
 
               <CheckoutButton
                 planType={paywallPlan}
-                buttonText={`Pay ${paywallPlan === "1m" ? "₹199" : paywallPlan === "3m" ? "₹574" : paywallPlan === "6m" ? "₹1,099" : "₹2,000"} with UPI / Card & Unlock`}
                 className="w-full py-4 text-xs font-black rounded-xl"
               />
+
 
               <div className="flex items-center justify-center gap-2 pt-1 text-[11px] text-slate-400 font-medium">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, createSessionPayload, SESSION_COOKIE_NAME } from "@/lib/auth";
-import { verifyRazorpaySignature } from "@/lib/razorpay";
+import { verifyRazorpaySignature, verifyRazorpaySubscriptionSignature } from "@/lib/razorpay";
 import { FirestoreDB } from "@/lib/firestore-db";
 import { FirestoreREST } from "@/lib/firestore-rest";
 import { checkRateLimit, rateLimitExceededResponse } from "@/lib/rate-limit";
@@ -24,12 +24,16 @@ export async function POST(req: NextRequest | Request) {
     const body = await req.json().catch(() => ({}));
     const {
       razorpay_order_id,
+      razorpay_subscription_id,
       razorpay_payment_id,
       razorpay_signature,
       planType = "1y",
+      isAutoPay = false,
     } = body;
 
-    if (!razorpay_order_id || !razorpay_payment_id) {
+    const isSubscription = Boolean(razorpay_subscription_id);
+
+    if ((!razorpay_order_id && !razorpay_subscription_id) || !razorpay_payment_id) {
       return NextResponse.json(
         { error: "Missing required order or payment identifiers" },
         { status: 400 }
@@ -46,11 +50,20 @@ export async function POST(req: NextRequest | Request) {
       return NextResponse.json({ error: "Payment gateway configuration error" }, { status: 500 });
     }
 
-    const isValid = verifyRazorpaySignature({
-      orderId: razorpay_order_id,
-      paymentId: razorpay_payment_id,
-      signature: razorpay_signature,
-    });
+    let isValid = false;
+    if (isSubscription) {
+      isValid = verifyRazorpaySubscriptionSignature({
+        subscriptionId: razorpay_subscription_id,
+        paymentId: razorpay_payment_id,
+        signature: razorpay_signature,
+      });
+    } else {
+      isValid = verifyRazorpaySignature({
+        orderId: razorpay_order_id,
+        paymentId: razorpay_payment_id,
+        signature: razorpay_signature,
+      });
+    }
 
     if (!isValid) {
       return NextResponse.json(
@@ -58,6 +71,7 @@ export async function POST(req: NextRequest | Request) {
         { status: 400 }
       );
     }
+
 
     // Update database records safely
     let orderId = `ord_${Date.now()}`;
@@ -114,7 +128,9 @@ export async function POST(req: NextRequest | Request) {
           await FirestoreREST.setDocument("users", fsUser.id, {
             ...fsUser,
             isPro: true,
-            planName: `${planTitle} Pro`,
+            isAutoPay: isSubscription || Boolean(isAutoPay),
+            subscriptionId: razorpay_subscription_id || null,
+            planName: `${planTitle} Pro${isSubscription ? " (AutoPay)" : ""}`,
             planType: normalizedPlan || "1y",
             paidAt: activationTime,
             expiresAt,
@@ -149,7 +165,9 @@ export async function POST(req: NextRequest | Request) {
         userId: userId || fsBusiness?.userId || "user",
         category: fsBusiness?.category || "cafe",
         isPro: true,
-        planName: `${planTitle} Pro`,
+        isAutoPay: isSubscription || Boolean(isAutoPay),
+        subscriptionId: razorpay_subscription_id || null,
+        planName: `${planTitle} Pro${isSubscription ? " (AutoPay)" : ""}`,
         planType: normalizedPlan || "1y",
         monthlyAiQuota: 999999,
         paidAt: activationTime,
@@ -164,6 +182,8 @@ export async function POST(req: NextRequest | Request) {
           businessSlug: targetSlug,
           businessId: targetSlug,
           isPro: true,
+          isAutoPay: isSubscription || Boolean(isAutoPay),
+          subscriptionId: razorpay_subscription_id || null,
           name: finalBizDoc.name,
           paidAt: activationTime,
           expiresAt,
@@ -174,16 +194,19 @@ export async function POST(req: NextRequest | Request) {
     }
 
     // Persist immutable order record in Firestore
+    const orderDocKey = razorpay_order_id || razorpay_subscription_id || `ord_${Date.now()}`;
     try {
-      await FirestoreREST.setDocument("orders", razorpay_order_id, {
-        id: razorpay_order_id,
-        orderId: razorpay_order_id,
+      await FirestoreREST.setDocument("orders", orderDocKey, {
+        id: orderDocKey,
+        orderId: razorpay_order_id || null,
+        subscriptionId: razorpay_subscription_id || null,
+        isAutoPay: isSubscription || Boolean(isAutoPay),
         paymentId: razorpay_payment_id,
         amount: amountInPaise,
         currency: "INR",
         status: "paid",
         planType: normalizedPlan || "1y",
-        planName: planTitle,
+        planName: `${planTitle}${isSubscription ? " (AutoPay)" : ""}`,
         userId: userId || "guest",
         userEmail: userEmail || "",
         businessSlug: fsBusiness?.slug || businessSlug || "",
@@ -193,6 +216,7 @@ export async function POST(req: NextRequest | Request) {
     } catch (orderSaveErr) {
       console.warn("Firestore order record note:", orderSaveErr);
     }
+
 
     const res = NextResponse.json({
       success: true,

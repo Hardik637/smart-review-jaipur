@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { FirestoreDB } from "@/lib/firestore-db";
-import { getRazorpayInstance } from "@/lib/razorpay";
+import { getRazorpayInstance, getOrCreateRazorpayPlan } from "@/lib/razorpay";
 import { checkRateLimit, rateLimitExceededResponse } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
@@ -23,6 +23,7 @@ export async function POST(req: NextRequest | Request) {
 
     const body = await req.json().catch(() => ({}));
     const requestedPlan = (body?.planType || "").toLowerCase();
+    const isAutoPay = Boolean(body?.autoPay);
 
     // Multi-tier pricing plans:
     // - 1 Month: ₹199 (19900 paise)
@@ -56,56 +57,109 @@ export async function POST(req: NextRequest | Request) {
       process.env.RAZORPAY_KEY_ID;
     const key_secret = process.env.RAZORPAY_KEY_SECRET;
 
-    let razorpayOrderId = `order_${Date.now()}`;
+    let razorpayOrderId: string | null = null;
+    let razorpaySubscriptionId: string | null = null;
     let isMock = false;
 
-    // If real keys are provided, create live Razorpay order
-    if (key_id && key_secret && !key_id.includes("placeholder")) {
+    // Resolve user's business context for order attribution
+    let businessSlug = session?.businessSlug;
+    let businessId = session?.businessId;
+    if (!businessSlug && session?.userId) {
       try {
-        const razorpay = getRazorpayInstance();
-        const order = await razorpay.orders.create({
-          amount: amountInPaise,
-          currency: "INR",
-          receipt: `rcpt_${Date.now().toString().slice(-8)}`,
-          notes: {
-            planType,
-            userId: session.userId,
-            userEmail: session.email,
-          },
-        });
-        razorpayOrderId = order.id;
-        isMock = false;
-      } catch (pgError: any) {
-        console.error("Razorpay order creation error:", pgError);
-        return NextResponse.json(
-          {
-            error: pgError.message || "Failed to initialize payment order with Razorpay",
-          },
-          { status: 500 }
-        );
+        const biz = await FirestoreDB.getBusinessByUserId(session.userId);
+        if (biz) {
+          businessId = biz.id || biz.slug;
+          businessSlug = biz.slug;
+        }
+      } catch (bizErr) {
+        console.warn("Business lookup note in create-order:", bizErr);
+      }
+    }
+
+    // If real keys are provided, create live Razorpay entity
+    if (key_id && key_secret && !key_id.includes("placeholder")) {
+      const razorpay = getRazorpayInstance();
+
+      if (isAutoPay) {
+        // Recurring AutoPay Subscription via Razorpay Subscriptions API
+        try {
+          const { id: planId, config: planConfig } = await getOrCreateRazorpayPlan(planType);
+
+          const subscription = await razorpay.subscriptions.create({
+            plan_id: planId,
+            total_count: planConfig.total_count,
+            customer_notify: 1,
+            notes: {
+              planType,
+              userId: session.userId,
+              userEmail: session.email || "",
+              businessSlug: businessSlug || "",
+              isAutoPay: "true",
+            },
+          });
+
+          razorpaySubscriptionId = subscription.id;
+          isMock = false;
+        } catch (subError: any) {
+          console.error("Razorpay subscription creation error:", subError);
+          const errorMsg =
+            subError?.error?.description ||
+            subError?.message ||
+            "AutoPay recurring debit could not be initiated";
+          return NextResponse.json(
+            {
+              error: `${errorMsg}. You can uncheck AutoPay to complete instant checkout via standard UPI or Cards.`,
+            },
+            { status: 500 }
+          );
+        }
+      } else {
+        // Standard One-Time Order
+        try {
+          const order = await razorpay.orders.create({
+            amount: amountInPaise,
+            currency: "INR",
+            receipt: `rcpt_${Date.now().toString().slice(-8)}`,
+            notes: {
+              planType,
+              userId: session.userId,
+              userEmail: session.email || "",
+              businessSlug: businessSlug || "",
+              isAutoPay: "false",
+            },
+          });
+          razorpayOrderId = order.id;
+          isMock = false;
+        } catch (pgError: any) {
+          console.error("Razorpay order creation error:", pgError);
+          return NextResponse.json(
+            {
+              error: pgError.message || "Failed to initialize payment order with Razorpay",
+            },
+            { status: 500 }
+          );
+        }
+      }
+    } else {
+      isMock = true;
+      razorpayOrderId = `mock_order_${Date.now()}`;
+      if (isAutoPay) {
+        razorpaySubscriptionId = `mock_sub_${Date.now()}`;
       }
     }
 
     // Save order record to authoritative Firestore
     let orderRecordId = `ord_${Date.now()}`;
     try {
-      let businessSlug = session?.businessSlug;
-      let businessId = session?.businessId;
-      if (!businessSlug && session?.userId) {
-        const biz = await FirestoreDB.getBusinessByUserId(session.userId);
-        if (biz) {
-          businessId = biz.id || biz.slug;
-          businessSlug = biz.slug;
-        }
-      }
-
       const orderRecord = await FirestoreDB.createOrder({
         id: orderRecordId,
         businessId: businessId || null,
         businessSlug: businessSlug || null,
         userId: session.userId,
         userEmail: session.email || null,
-        razorpayOrderId,
+        razorpayOrderId: razorpayOrderId || null,
+        razorpaySubscriptionId: razorpaySubscriptionId || null,
+        isAutoPay,
         amount: amountInPaise,
         currency: "INR",
         status: "created",
@@ -119,13 +173,16 @@ export async function POST(req: NextRequest | Request) {
 
     return NextResponse.json({
       success: true,
+      isSubscription: isAutoPay && Boolean(razorpaySubscriptionId),
+      subscriptionId: razorpaySubscriptionId,
       orderId: razorpayOrderId,
       amount: amountInPaise,
       currency: "INR",
       keyId: key_id || "rzp_test_placeholder",
       isMock,
-      planLabel,
+      planLabel: isAutoPay ? `${planLabel} (AutoPay)` : planLabel,
       planType,
+      isAutoPay,
       prefill: {
         email: session.email,
       },
@@ -139,3 +196,4 @@ export async function POST(req: NextRequest | Request) {
     );
   }
 }
+
